@@ -1,0 +1,157 @@
+name: CI Tests + Allure Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: allure-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Checkout gh-pages (history source)
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Run tests
+        shell: pwsh
+        run: mvn -B clean test -Dheadless=true
+
+      - name: Restore Allure history from gh-pages
+        shell: pwsh
+        run: |
+          if (Test-Path "gh-pages/history") {
+            New-Item -ItemType Directory -Path "target/allure-results/history" -Force | Out-Null
+            Copy-Item "gh-pages/history/*" "target/allure-results/history/" -Recurse -Force
+            Write-Host "Allure history restored from gh-pages."
+          }
+          else {
+            Write-Host "No previous gh-pages history found."
+          }
+
+      - name: Regenerate Allure report with history
+        shell: pwsh
+        run: mvn -B allure:report
+
+      - name: Install Allure CLI (for single-file)
+        shell: pwsh
+        run: |
+          $version = "2.30.0"
+          $zipFile = "allure-$version.zip"
+          $url = "https://github.com/allure-framework/allure2/releases/download/$version/$zipFile"
+          Invoke-WebRequest -Uri $url -OutFile $zipFile
+          Expand-Archive -Path $zipFile -DestinationPath . -Force
+          $allureBin = "$PWD\allure-$version\bin\allure.bat"
+          "ALLURE_BIN=$allureBin" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Generate single-file report
+        shell: pwsh
+        run: |
+          try {
+            & "$env:ALLURE_BIN" generate target/allure-results --clean --single-file -o target/reports/allure-single-file
+            New-Item -ItemType Directory -Path "target/reports/allure-report/single-file" -Force | Out-Null
+            Copy-Item "target/reports/allure-single-file/index.html" "target/reports/allure-report/single-file/index.html" -Force
+            Write-Host "Single-file report generated successfully."
+          }
+          catch {
+            Write-Host "Single-file generation failed. Keeping standard Allure report only."
+          }
+
+      - name: Upload Allure report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: target/reports/allure-report
+          if-no-files-found: warn
+
+      - name: Upload single-file artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-single-file
+          path: target/reports/allure-report/single-file/index.html
+          if-no-files-found: warn
+
+      - name: Deploy Allure report to GitHub Pages (gh-pages)
+        if: github.event_name != 'pull_request'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: target/reports/allure-report
+          enable_jekyll: false
+
+      - name: Comment PR with Allure links
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- allure-report-comment -->';
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = context.payload.pull_request.number;
+
+            const pagesUrl = `https://${owner}.github.io/${repo}/`;
+            const singleFileUrl = `${pagesUrl}single-file/index.html`;
+            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
+
+            const body = `${marker}
+            ## 📊 Allure Report
+
+            - 🌐 Online (última execução publicada em main): ${pagesUrl}
+            - 📄 Single-file (última execução publicada em main): ${singleFileUrl}
+            - 🧪 Artefatos desta execução do PR: ${runUrl}
+
+            > Nota: para PR, o deploy em GitHub Pages não é executado. O link online reflete a última publicação da branch main.`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+
+            const existing = comments.find(comment =>
+              comment.user?.type === 'Bot' && comment.body?.includes(marker)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body,
+              });
+            }

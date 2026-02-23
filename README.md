@@ -114,6 +114,43 @@ Gerar e abrir relatório Allure local:
 mvn allure:serve
 ```
 
+## Pipeline e relatório online (GitHub Pages)
+
+Este repositório possui pipeline em [.github/workflows/allure-pages.yml](.github/workflows/allure-pages.yml) para:
+
+- Executar testes automaticamente no GitHub Actions
+- Gerar Allure report com histórico (Trend entre execuções)
+- Publicar relatório online na branch `gh-pages`
+- Gerar versão `single-file` do Allure e anexar como artifact
+- Comentar automaticamente no PR com links do relatório e artefatos da execução
+
+URL do relatório online (após primeira execução da pipeline):
+
+```text
+https://<seu-usuario>.github.io/<seu-repositorio>/
+```
+
+Exemplo para este projeto:
+
+```text
+https://gabrielsouza80.github.io/playwright-java-saucedemo/
+```
+
+Arquivo single-file publicado:
+
+```text
+https://gabrielsouza80.github.io/playwright-java-saucedemo/single-file/index.html
+```
+
+### Como habilitar no GitHub
+
+1. Faça push do repositório com o workflow.
+2. Vá em **Settings > Pages**.
+3. Em **Build and deployment**, selecione **Deploy from a branch**.
+4. Escolha a branch **gh-pages** e a pasta **/(root)**.
+
+> Dica: em repositórios novos, a branch `gh-pages` é criada automaticamente após a primeira execução bem-sucedida do workflow.
+
 ## Convenções de testes
 
 - Casos identificados por `TCxx` no `@DisplayName`
@@ -125,4 +162,5 @@ mvn allure:serve
 
 - Falha por configuração ausente: valide `config.properties` e nomes das chaves
 - Allure em branco ao abrir HTML direto: prefira `mvn allure:serve`
+- Widget `Categories` vazio: esperado quando não existem testes `failed`/`broken` (suíte 100% verde)
 - Erros visuais no VS Code após refactor: reinicie o Java Language Server
