@@ -158,6 +158,12 @@ https://gabrielsouza80.github.io/playwright-java-saucedemo/single-file/index.htm
 - Fluxos comuns centralizados em `BaseTest`
 - Regras de tela encapsuladas em Page Objects
 
+## Glossário rápido
+
+- CI (Continuous Integration): execução automática de testes a cada push/PR
+- CD (Continuous Delivery): publicação automática do relatório (Allure no Pages)
+- Single-file: relatório Allure em um único HTML (bom para compartilhar, pode ficar pesado)
+
 ## Troubleshooting rápido
 
 - Falha por configuração ausente: valide `config.properties` e nomes das chaves
