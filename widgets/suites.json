@@ -1,0 +1,1 @@
+{"total":2,"items":[{"uid":"c4e36be595a90ede882569369e8aaa20","name":"com.playwright.java.tests.HomePageTest","statistic":{"failed":0,"broken":0,"skipped":0,"passed":13,"unknown":0,"total":13}},{"uid":"916024ad4b3831fbfe3c9709d52121c3","name":"com.playwright.java.tests.SauceDemoLoginTest","statistic":{"failed":0,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":1}}]}
