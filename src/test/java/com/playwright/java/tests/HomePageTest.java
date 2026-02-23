@@ -1,4 +1,4 @@
-package pt.com.gabriel.tests;
+package com.playwright.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,12 +13,17 @@ import io.qameta.allure.Story;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import pt.com.gabriel.base.BaseTest;
+import com.playwright.java.base.BaseTest;
 
 // Suíte de testes da HomePage com foco em funcionalidades principais.
 @Epic("Web Automation")
 @Feature("Homepage")
+@Owner("gabriel")
 public class HomePageTest extends BaseTest {
+
+    private static final String PRODUCTS_TITLE = "Products";
+    private static final String DEFAULT_SORT = "Name (A to Z)";
+    private static final int EXPECTED_INVENTORY_ITEMS = 6;
 
     // Valida carregamento da home e elementos básicos.
     @Test
@@ -44,7 +49,7 @@ public class HomePageTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("Valida o título da home como Products.")
     void shouldDisplayProductsTitle() {
-        assertEquals("Products", homePage.getPageTitle());
+        assertEquals(PRODUCTS_TITLE, homePage.getPageTitle());
     }
 
     // Valida opção de ordenação padrão.
@@ -56,7 +61,7 @@ public class HomePageTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("Valida a opção padrão de ordenação na primeira carga da home.")
     void shouldDisplayDefaultSortingOption() {
-        assertEquals("Name (A to Z)", homePage.getActiveSortOption());
+        assertEquals(DEFAULT_SORT, homePage.getActiveSortOption());
     }
 
     // Valida quantidade de produtos esperada no SauceDemo.
@@ -68,7 +73,7 @@ public class HomePageTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("Valida a quantidade esperada de produtos no inventário.")
     void shouldDisplaySixInventoryItems() {
-        assertEquals(6, homePage.getInventoryItemCount());
+        assertEquals(EXPECTED_INVENTORY_ITEMS, homePage.getInventoryItemCount());
     }
 
     // Ordenação por nome crescente (A-Z).
@@ -77,6 +82,9 @@ public class HomePageTest extends BaseTest {
     @Tag("sorting")
     @Tag("tc06")
     @DisplayName("TC06 - Deve ordenar por nome crescente")
+    @Story("Sorting")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida ordenação por nome crescente (A to Z).")
     void shouldSortProductsByNameAscending() {
         homePage.sortBy("az");
         assertTrue(homePage.areProductNamesSortedAscending());
@@ -88,6 +96,9 @@ public class HomePageTest extends BaseTest {
     @Tag("sorting")
     @Tag("tc07")
     @DisplayName("TC07 - Deve ordenar por nome decrescente")
+    @Story("Sorting")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida ordenação por nome decrescente (Z to A).")
     void shouldSortProductsByNameDescending() {
         homePage.sortBy("za");
         assertTrue(homePage.areProductNamesSortedDescending());
@@ -99,6 +110,9 @@ public class HomePageTest extends BaseTest {
     @Tag("sorting")
     @Tag("tc08")
     @DisplayName("TC08 - Deve ordenar por preço crescente")
+    @Story("Sorting")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida ordenação por preço crescente (low to high).")
     void shouldSortProductsByPriceAscending() {
         homePage.sortBy("lohi");
         assertTrue(homePage.arePricesSortedAscending());
@@ -110,6 +124,9 @@ public class HomePageTest extends BaseTest {
     @Tag("sorting")
     @Tag("tc09")
     @DisplayName("TC09 - Deve ordenar por preço decrescente")
+    @Story("Sorting")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida ordenação por preço decrescente (high to low).")
     void shouldSortProductsByPriceDescending() {
         homePage.sortBy("hilo");
         assertTrue(homePage.arePricesSortedDescending());
@@ -121,11 +138,14 @@ public class HomePageTest extends BaseTest {
     @Tag("cart")
     @Tag("tc10")
     @DisplayName("TC10 - Deve adicionar mochila ao carrinho")
+    @Story("Cart")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Adiciona o item Backpack ao carrinho e valida estado visual e badge.")
     void shouldAddBackpackToCart() {
         homePage.addBackpackToCart();
 
         assertTrue(homePage.isBackpackAddedToCart());
-        assertEquals(1, homePage.getCartBadgeCount());
+        assertCartBadgeCount(1);
     }
 
     // Remove item do carrinho e valida contador zerado.
@@ -134,11 +154,14 @@ public class HomePageTest extends BaseTest {
     @Tag("cart")
     @Tag("tc11")
     @DisplayName("TC11 - Deve remover mochila do carrinho")
+    @Story("Cart")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Remove item do carrinho e valida badge zerado.")
     void shouldRemoveBackpackFromCart() {
         homePage.addBackpackToCart();
         homePage.removeBackpackFromCart();
 
-        assertEquals(0, homePage.getCartBadgeCount());
+        assertCartBadgeCount(0);
     }
 
     // Navega para carrinho e valida página correta.
@@ -147,6 +170,9 @@ public class HomePageTest extends BaseTest {
     @Tag("cart")
     @Tag("tc12")
     @DisplayName("TC12 - Deve abrir página de carrinho")
+    @Story("Cart")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Navega para a página de carrinho a partir da home.")
     void shouldOpenCartPageFromHome() {
         homePage.openCart();
 
@@ -159,13 +185,16 @@ public class HomePageTest extends BaseTest {
     @Tag("menu")
     @Tag("tc13")
     @DisplayName("TC13 - Deve resetar estado da aplicação")
+    @Story("Menu")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Executa reset do estado da aplicação e valida limpeza do carrinho.")
     void shouldResetAppStateAndClearCartBadge() {
         homePage.addBackpackToCart();
-        assertEquals(1, homePage.getCartBadgeCount());
+        assertCartBadgeCount(1);
 
         homePage.resetAppState();
 
-        assertEquals(0, homePage.getCartBadgeCount());
+        assertCartBadgeCount(0);
     }
 
     // Realiza logout e valida retorno para tela de login.
@@ -174,9 +203,16 @@ public class HomePageTest extends BaseTest {
     @Tag("menu")
     @Tag("tc14")
     @DisplayName("TC14 - Deve fazer logout pelo menu")
+    @Story("Menu")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Realiza logout pelo menu lateral e valida retorno para tela de login.")
     void shouldLogoutFromMenu() {
         homePage.logout();
 
         assertTrue(loginPage.isLoaded());
+    }
+
+    private void assertCartBadgeCount(int expectedCount) {
+        assertEquals(expectedCount, homePage.getCartBadgeCount());
     }
 }

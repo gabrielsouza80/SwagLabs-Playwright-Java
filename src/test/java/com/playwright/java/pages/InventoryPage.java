@@ -1,4 +1,4 @@
-package pt.com.gabriel.pages;
+package com.playwright.java.pages;
 
 import com.microsoft.playwright.Page;
 

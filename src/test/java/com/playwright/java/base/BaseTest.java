@@ -1,4 +1,4 @@
-package pt.com.gabriel.base;
+package com.playwright.java.base;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Browser.NewContextOptions;
@@ -24,10 +24,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
-import pt.com.gabriel.config.TestConfig;
-import pt.com.gabriel.pages.HomePage;
-import pt.com.gabriel.pages.InventoryPage;
-import pt.com.gabriel.pages.LoginPage;
+import com.playwright.java.config.TestConfig;
+import com.playwright.java.pages.HomePage;
+import com.playwright.java.pages.InventoryPage;
+import com.playwright.java.pages.LoginPage;
 
 // Classe base de todos os testes.
 // Tudo que é comum (abrir browser, login, fechar browser) fica aqui.

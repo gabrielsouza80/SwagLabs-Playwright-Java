@@ -1,4 +1,4 @@
-package pt.com.gabriel.config;
+package com.playwright.java.config;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,19 +29,20 @@ public class TestConfig {
 
         // Tenta ler o arquivo src/test/resources/config.properties do classpath.
         try (InputStream input = TestConfig.class.getClassLoader().getResourceAsStream("config.properties")) {
-            if (input != null) {
-                properties.load(input);
+            if (input == null) {
+                throw new IllegalStateException("config.properties was not found in test resources");
             }
+            properties.load(input);
         } catch (IOException exception) {
             // Interrompe com mensagem clara se falhar ao ler o arquivo.
             throw new IllegalStateException("Failed to load config.properties", exception);
         }
 
-        // Prioridade: parâmetro de sistema (-D) > arquivo properties > valor default.
-        String baseUrl = System.getProperty("baseUrl", properties.getProperty("baseUrl", "https://www.saucedemo.com/"));
-        String username = System.getProperty("username", properties.getProperty("username", "standard_user"));
-        String password = System.getProperty("password", properties.getProperty("password", "secret_sauce"));
-        boolean headless = Boolean.parseBoolean(System.getProperty("headless", properties.getProperty("headless", "true")));
+        // Prioridade: parâmetro de sistema (-D) > arquivo properties.
+        String baseUrl = readRequiredSetting("baseUrl", properties);
+        String username = readRequiredSetting("username", properties);
+        String password = readRequiredSetting("password", properties);
+        boolean headless = Boolean.parseBoolean(readRequiredSetting("headless", properties));
 
         // Retorna um objeto imutável de configuração.
         return new TestConfig(baseUrl, username, password, headless);
@@ -62,5 +63,18 @@ public class TestConfig {
 
     public boolean headless() {
         return headless;
+    }
+
+    private static String readRequiredSetting(String key, Properties properties) {
+        String value = System.getProperty(key);
+        if (value == null || value.isBlank()) {
+            value = properties.getProperty(key);
+        }
+
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException("Missing required configuration key: " + key);
+        }
+
+        return value.trim();
     }
 }

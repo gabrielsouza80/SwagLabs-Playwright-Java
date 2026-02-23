@@ -1,147 +1,52 @@
-# Playwright Java SauceDemo (Guia de Estudo)
+# Playwright Java SauceDemo
 
-Este projeto foi organizado para você aprender **Java + Playwright** de forma progressiva.
+Framework de automação web com Java 21, Playwright, JUnit 5 e Allure, focado em testes E2E do SauceDemo.
 
-> Projeto **100% focado em automação de testes** (sem código de aplicação em `src/main`).
+## Visão geral
+
+- Arquitetura baseada em Page Object Model (POM)
+- Configuração centralizada por arquivo e propriedades de sistema
+- Execução por classe, método e tags (`includeTags` / `excludeTags`)
+- Relatórios Allure e screenshots automáticos por teste
+
+## Stack técnica
+
+- Java 21
+- Maven
+- Playwright for Java
+- JUnit Jupiter (JUnit 5)
+- Allure Report
 
 ## Estrutura do projeto
 
-- `src/test/java/pt/com/gabriel/base/BaseTest.java`
-  - Setup de suíte e setup por teste (`@BeforeAll`, `@BeforeEach`, `@AfterEach`, `@AfterAll`)
-  - Inicializa Playwright/browser e cria contexto isolado por teste
-  - Login global uma vez e reaproveitamento de sessão autenticada
-
-- `src/test/java/pt/com/gabriel/config/TestConfig.java`
-  - Lê configurações de `src/test/resources/config.properties`
-  - Permite sobrescrever por parâmetro `-D`
-
-- `src/test/java/pt/com/gabriel/pages/*.java`
-  - Page Objects (uma classe por página)
-  - Métodos de ação e validação da UI
-
-- `src/test/java/pt/com/gabriel/tests/*.java`
-  - Casos de teste (`@Test`)
-  - Orquestram fluxo usando os Page Objects
-
-- `src/test/resources/config.properties`
-  - URL, usuário, senha, modo headless
-
----
-
-## Como executar os testes
-
-Na raiz do projeto:
-
-```bash
-mvn test
-```
-
-Com navegador visível:
-
-```bash
-mvn test -Dheadless=false
-```
-
-Rodar apenas uma classe de teste:
-
-```bash
-mvn -Dtest=HomePageTest test
-```
-
-Rodar apenas o primeiro teste (TC01):
-
-```bash
-mvn -Dtest=SauceDemoLoginTest#shouldLoginWithStandardUser test
-```
-
-Rodar por tag (ex.: smoke):
-
-```bash
-mvn test -DincludeTags=smoke
-```
-
-Excluir uma tag (ex.: menu):
-
-```bash
-mvn test -DexcludeTags=menu
-```
-
-Gerar testes + relatório final HTML (Allure) em um comando:
-
-```bash
-mvn test
-```
-
-Abrir relatório gerado em:
-
 ```text
-target/reports/allure-report/index.html
+src/
+  test/
+    java/com/playwright/java/
+      base/
+        BaseTest.java
+      config/
+        TestConfig.java
+      pages/
+        HomePage.java
+        InventoryPage.java
+        LoginPage.java
+      tests/
+        HomePageTest.java
+        SauceDemoLoginTest.java
+    resources/
+      config.properties
 ```
 
-Screenshots tirados no tearDown ficam em:
+## Pré-requisitos
 
-```text
-target/reports/screenshots
-```
+- JDK 21 configurado no ambiente
+- Maven disponível no terminal
+- Acesso à internet na primeira execução (download de dependências)
 
-Observação: a cada nova execução, os resultados e o relatório anterior são apagados e substituídos pelo atual.
+## Configuração
 
----
-
-## Ordem de aprendizado recomendada
-
-1. **BaseTest**
-   - Entenda ciclo de vida do JUnit (`@BeforeEach`, `@AfterEach`)
-   - Entenda como browser/context/page são criados
-
-2. **LoginPage**
-   - Veja como um Page Object usa seletores (`data-test`)
-   - Entenda `open()`, `isLoaded()`, `login()`
-
-3. **HomePage**
-   - Entenda validações (`isLoaded`, título, contagem)
-   - Entenda ações (sort, carrinho, menu, logout)
-
-4. **Testes**
-   - `SauceDemoLoginTest`: teste simples de login
-   - `HomePageTest`: cenários principais da home
-
----
-
-## Como pensar em testes (modelo simples)
-
-Para cada funcionalidade, siga:
-
-1. **Pré-condição** (ex.: usuário logado)
-2. **Ação** (ex.: clicar em Add to cart)
-3. **Validação** (ex.: badge do carrinho = 1)
-
----
-
-## Exercícios práticos (para evoluir)
-
-1. Criar teste de **login inválido** e validar mensagem de erro
-2. Criar método na HomePage para adicionar **2 produtos diferentes**
-3. Validar que o carrinho mostra os itens corretos
-4. Criar teste de **logout** e validar retorno para login
-5. Criar tags de suíte (`smoke`, `regression`) com JUnit
-
----
-
-## Dicas para quem vem de Robot Framework
-
-- Em Robot você chama keywords; em Java você chama **métodos**.
-- `BaseTest` é o equivalente ao setup/teardown global por teste.
-- `Page Object` é onde ficam os “keywords” da página.
-- Teste deve ser legível: poucas linhas, foco em regra de negócio.
-
----
-
-## Configuração de ambiente
-
-Arquivo: `src/test/resources/config.properties`
-
-Exemplo:
+Arquivo principal: `src/test/resources/config.properties`
 
 ```properties
 baseUrl=https://www.saucedemo.com/
@@ -150,8 +55,74 @@ password=secret_sauce
 headless=true
 ```
 
-Você pode sobrescrever via Maven:
+Regras de leitura da configuração:
+
+1. Valor informado por `-D` no Maven
+2. Valor presente em `config.properties`
+
+> Observação: as chaves `baseUrl`, `username`, `password` e `headless` são obrigatórias.
+
+## Execução dos testes
+
+Executar suíte completa:
 
 ```bash
-mvn test -Dheadless=false -Dusername=standard_user -Dpassword=secret_sauce
+mvn test
 ```
+
+Executar com navegador visível:
+
+```bash
+mvn test -Dheadless=false
+```
+
+Executar uma classe:
+
+```bash
+mvn -Dtest=HomePageTest test
+```
+
+Executar um método:
+
+```bash
+mvn -Dtest=SauceDemoLoginTest#shouldLoginWithStandardUser test
+```
+
+Executar por tag:
+
+```bash
+mvn test -DincludeTags=smoke
+```
+
+Excluir tag:
+
+```bash
+mvn test -DexcludeTags=menu
+```
+
+## Relatórios e evidências
+
+Após a execução:
+
+- Resultado Allure: `target/allure-results`
+- Relatório HTML: `target/reports/allure-report/index.html`
+- Screenshots: `target/reports/screenshots`
+
+Gerar e abrir relatório Allure local:
+
+```bash
+mvn allure:serve
+```
+
+## Convenções de testes
+
+- Casos identificados por `TCxx` no `@DisplayName`
+- Tags funcionais e de execução (`home`, `login`, `smoke`, `cart`, `menu`, etc.)
+- Fluxos comuns centralizados em `BaseTest`
+- Regras de tela encapsuladas em Page Objects
+
+## Troubleshooting rápido
+
+- Falha por configuração ausente: valide `config.properties` e nomes das chaves
+- Allure em branco ao abrir HTML direto: prefira `mvn allure:serve`
+- Erros visuais no VS Code após refactor: reinicie o Java Language Server
