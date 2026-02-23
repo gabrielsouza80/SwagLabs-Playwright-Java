@@ -40,7 +40,7 @@ public class HomePageTest extends BaseTest {
         assertTrue(homePage.hasMainHomeElements());
     }
 
-    // Valida título principal da página.
+    // Valida título principal da página
     @Test
     @Tag("home")
     @Tag("tc03")
