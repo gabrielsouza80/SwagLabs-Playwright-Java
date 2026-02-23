@@ -62,6 +62,10 @@
               <configuration>
                 <target>
                   <delete dir="${project.build.directory}/allure-results"/>
+                  <mkdir dir="${project.build.directory}/allure-results/history"/>
+                  <copy todir="${project.build.directory}/allure-results/history" overwrite="true" failonerror="false">
+                    <fileset dir="${project.build.directory}/reports/allure-report/history" erroronmissingdir="false"/>
+                  </copy>
                   <delete dir="${project.build.directory}/reports/allure-report"/>
                   <delete dir="${project.build.directory}/reports/screenshots"/>
                   <delete dir="${project.build.directory}/screenshots"/>
