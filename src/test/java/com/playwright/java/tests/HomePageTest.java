@@ -39,8 +39,8 @@ public class HomePageTest extends BaseTest {
             assertTrue(homePage.isLoaded()));
 
         Allure.step("Quando consultar o título e os elementos da Home", () -> {
-            homePage.getPageTitle();
-            homePage.hasMainHomeElements();
+            assertTrue(homePage.hasExpectedTitle());
+            assertTrue(homePage.hasMainHomeElements());
         });
 
         Allure.step("Então deve visualizar os elementos principais da Home", () ->

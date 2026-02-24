@@ -45,6 +45,16 @@ public class LoginPage {
         return page.locator(LOGIN_BUTTON).isVisible();
     }
 
+    @Step("Validar campo de usuário visível")
+    public boolean isUsernameInputVisible() {
+        return page.locator(USERNAME_INPUT).isVisible();
+    }
+
+    @Step("Validar campo de senha visível")
+    public boolean isPasswordInputVisible() {
+        return page.locator(PASSWORD_INPUT).isVisible();
+    }
+
     // Preenche usuário/senha e clica em login.
     @Step("Realizar login com usuário: {username}")
     public void login(String username, String password) {
@@ -118,6 +128,11 @@ public class LoginPage {
     @Step("Validar mensagem de erro contém: {expectedText}")
     public boolean hasErrorMessageContaining(String expectedText) {
         return isErrorVisible() && getErrorMessage().contains(expectedText);
+    }
+
+    @Step("Validar que usuário não foi redirecionado para inventário")
+    public boolean isOnInventoryPage() {
+        return page.url().contains("/inventory.html");
     }
 
     @Step("Tentar login sem usuário")

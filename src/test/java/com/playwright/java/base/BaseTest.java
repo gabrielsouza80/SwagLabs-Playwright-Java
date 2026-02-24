@@ -97,6 +97,8 @@ public abstract class BaseTest {
     // Assim os testes ficam independentes entre si.
     @BeforeEach
     void setUpTest() {
+        Allure.label("owner", "Gabriel Souza");
+
         NewContextOptions contextOptions = new NewContextOptions()
                 .setViewportSize(config.viewportWidth(), config.viewportHeight());
 
