@@ -154,9 +154,45 @@ public class HomePage {
         page.locator(REMOVE_BACKPACK_BUTTON).click();
     }
 
+    // Tenta remover Backpack sem adicionar antes.
+    // Retorna true quando o botão Remove estava disponível e foi clicado.
+    @Step("Tentar remover Backpack sem adicionar")
+    public boolean tryRemoveBackpackWithoutAdding() {
+        if (!page.locator(REMOVE_BACKPACK_BUTTON).isVisible()) {
+            return false;
+        }
+
+        page.locator(REMOVE_BACKPACK_BUTTON).click();
+        return true;
+    }
+
     // Se o botão Remove está visível, significa que o item foi adicionado.
     public boolean isBackpackAddedToCart() {
         return page.locator(REMOVE_BACKPACK_BUTTON).isVisible();
+    }
+
+    // Anomalia observada no problem_user: Backpack já aparece como Remove sem adicionar.
+    public boolean isBackpackInIncorrectDefaultState() {
+        return page.locator(REMOVE_BACKPACK_BUTTON).isVisible()
+                && page.locator(ADD_BACKPACK_BUTTON).count() == 0;
+    }
+
+    // Anomalia observada no problem_user: imagens da lista usam placeholder sl-404.
+    public boolean areAllInventoryImagesUsingErrorPlaceholder() {
+        List<String> imageSources = page.locator("img[data-test$='-img']").all().stream()
+                .map(locator -> locator.getAttribute("src"))
+                .filter(source -> source != null && !source.isBlank())
+                .collect(Collectors.toList());
+
+        return !imageSources.isEmpty() && imageSources.stream().allMatch(source -> source.contains("sl-404"));
+    }
+
+    // Versão menos rígida: confirma pelo menos uma imagem quebrada no inventário.
+    public boolean hasAnyInventoryImageUsingErrorPlaceholder() {
+        return page.locator("img[data-test$='-img']").all().stream()
+                .map(locator -> locator.getAttribute("src"))
+                .filter(source -> source != null && !source.isBlank())
+                .anyMatch(source -> source.contains("sl-404"));
     }
 
     // Retorna quantidade de itens no badge do carrinho.

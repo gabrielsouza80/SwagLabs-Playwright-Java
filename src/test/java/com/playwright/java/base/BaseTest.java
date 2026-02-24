@@ -27,7 +27,6 @@ import org.junit.jupiter.api.TestInstance;
 import com.playwright.java.config.TestConfig;
 import com.playwright.java.pages.ComponentsPage;
 import com.playwright.java.pages.HomePage;
-import com.playwright.java.pages.InventoryPage;
 import com.playwright.java.pages.LoginPage;
 
 // Classe base de todos os testes.
@@ -46,7 +45,6 @@ public abstract class BaseTest {
 
     // Page Objects reutilizados em qualquer teste.
     protected LoginPage loginPage;
-    protected InventoryPage inventoryPage;
     protected HomePage homePage;
     protected ComponentsPage componentsPage;
 
@@ -114,7 +112,6 @@ public abstract class BaseTest {
         configurePage(page);
 
         loginPage = new LoginPage(page);
-        inventoryPage = new InventoryPage(page);
         homePage = new HomePage(page);
         componentsPage = new ComponentsPage(page);
 

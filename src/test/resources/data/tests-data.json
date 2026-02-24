@@ -34,7 +34,7 @@
     }
   },
   "tests": {
-    "LoginTest": {
+    "LoginPageTest": {
       "TC01": {
         "scenario": "login padrão com sucesso",
         "usernameRef": "standard"

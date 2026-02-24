@@ -30,11 +30,10 @@ src/
         TestData.java
       pages/
         HomePage.java
-        InventoryPage.java
         LoginPage.java
       tests/
         HomePageTest.java
-        LoginTest.java
+        LoginPageTest.java
     resources/
       config/
         config.properties
@@ -94,7 +93,7 @@ mvn -Dtest=HomePageTest test
 Executar um método:
 
 ```bash
-mvn -Dtest=LoginTest#shouldLoginWithStandardUser test
+mvn -Dtest=LoginPageTest#shouldLoginWithStandardUser test
 ```
 
 Executar por tag:

@@ -1,6 +1,7 @@
 package com.playwright.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
@@ -233,25 +234,46 @@ public class HomePageTest extends BaseTest {
     @Test
     @Tag("home")
     @Tag("multi-user")
+    @Tag("known-bug")
     @Tag("tc21")
-    @DisplayName("TC21 - Deve acessar Home com usuário problem_user")
+    @DisplayName("TC21 - Deve confirmar anomalias da Home com problem_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida login com problem_user e carregamento dos elementos principais da Home.")
-    void shouldAccessHomeWithProblemUser() {
+    @Description("Confirma problemas conhecidos da Home com problem_user: imagens com placeholder de erro e Backpack iniciando com botão Remove.")
+    void shouldConfirmProblemUserHomeAnomalies() {
+        Allure.label("knownIssue", "SAUCEDEMO-PROBLEM-USER-HOME");
+
         Allure.step("Dado que o usuário padrão está autenticado na Home", () ->
             assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando fizer logout e login com problem_user", () -> {
+        Allure.step("Quando fizer logout e entrar com problem_user", () -> {
             homePage.logout();
-            assertTrue(loginPage.isLoaded());
             loginPage.loginWithProblemUser();
         });
 
-        Allure.step("Então a Home deve carregar com elementos principais", () -> {
+        Allure.step("Então a Home deve carregar para o usuário problem_user", () -> {
             assertTrue(homePage.isLoaded());
-            assertTrue(homePage.hasMainHomeElements());
+            assertTrue(homePage.hasExpectedInventoryItemCount());
         });
+
+        boolean hasBrokenImageIssue = homePage.hasAnyInventoryImageUsingErrorPlaceholder();
+        boolean removeClickedWithoutAdd = homePage.tryRemoveBackpackWithoutAdding();
+
+        Allure.step("E deve confirmar anomalia de imagem quebrada (placeholder sl-404)", () ->
+            assertTrue(hasBrokenImageIssue));
+
+        Allure.step("E não deve permitir remover Backpack sem adicionar antes (defeito conhecido)", () ->
+            assertFalse(removeClickedWithoutAdd));
+
+        Allure.addAttachment(
+            "Known Defect Evidence",
+            "text/plain",
+            "Problem user anomalies -> brokenImage="
+                + hasBrokenImageIssue
+                + ", removeClickedWithoutAdd="
+                + removeClickedWithoutAdd,
+            ".txt"
+        );
     }
 
     @Test

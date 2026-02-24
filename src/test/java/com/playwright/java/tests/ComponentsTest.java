@@ -46,11 +46,19 @@ public class ComponentsTest extends BaseTest {
     @Tag("components")
     @Tag("menu")
     @Tag("tc19")
+        @Tag("known-bug")
     @DisplayName("TC19 - Deve resetar estado e voltar botão Backpack para Add to cart")
     @Story("Menu")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Valida reset de estado do menu global, incluindo badge e estado visual do botão do item.")
+        @Description("Valida reset de estado do menu global, incluindo badge e estado visual do botão do item. Defeito conhecido: após reset, o botão pode permanecer como Remove.")
     void shouldResetAppStateAndRestoreBackpackButtonState() {
+                Allure.label("knownIssue", "SAUCEDEMO-RESET-BACKPACK-BUTTON");
+                Allure.addAttachment(
+                                "Known Defect",
+                                "text/plain",
+                                "Known issue: após Reset App State, o badge zera mas o botão do Backpack pode permanecer como Remove em vez de voltar para Add to cart.",
+                                ".txt");
+
         Allure.step("Dado que o usuário está na Home autenticado", () ->
                 assertTrue(homePage.isLoaded()));
 
