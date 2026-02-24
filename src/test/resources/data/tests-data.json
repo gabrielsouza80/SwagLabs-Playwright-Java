@@ -133,24 +133,65 @@
         "badgeBeforeReset": 1,
         "badgeAfterReset": 0
       },
+      "TC25": {
+        "scenario": "acesso home com problem_user - anomalias",
+        "usernameRef": "problem",
+        "expectedAnomalies": [
+          "brokenImageIssue",
+          "startedWithRemove"
+        ]
+      },
+      "TC26": {
+        "scenario": "acesso home com performance_glitch_user - delay e anomalias",
+        "usernameRef": "performanceGlitch",
+        "minExpectedDelayMs": 3000,
+        "expectedAnomalies": [
+          "slowedDownLoad"
+        ]
+      },
+      "TC27": {
+        "scenario": "acesso home com error_user - anomalias",
+        "usernameRef": "error",
+        "expectedAnomalies": [
+          "buttonStateInconsistency"
+        ]
+      },
+      "TC28": {
+        "scenario": "acesso home com visual_user - anomalias visuais",
+        "usernameRef": "visual",
+        "expectedAnomalies": [
+          "textMisalignment",
+          "buttonMisalignment"
+        ]
+      }
+    },
+    "ProductDetailsTest": {
       "TC20": {
-        "scenario": "logout"
+        "scenario": "abrir página de detalhes ao clicar em um produto",
+        "productName": "Sauce Labs Backpack",
+        "expectedPrice": "$29.99"
       },
       "TC21": {
-        "scenario": "acesso home com problem_user",
-        "usernameRef": "problem"
+        "scenario": "exibir informações corretas do produto",
+        "productName": "Sauce Labs Backpack",
+        "expectedPrice": "$29.99",
+        "expectedDescriptionContains": "carry.allTheThings()"
       },
       "TC22": {
-        "scenario": "acesso home com performance_glitch_user",
-        "usernameRef": "performanceGlitch"
+        "scenario": "adicionar produto ao carrinho a partir de detalhes",
+        "productName": "Sauce Labs Backpack",
+        "expectedCartBadgeAfterAdd": 1
       },
       "TC23": {
-        "scenario": "acesso home com error_user",
-        "usernameRef": "error"
+        "scenario": "voltar para lista ao clicar em Back to products",
+        "productName": "Sauce Labs Backpack",
+        "expectedInventoryCountAfterBack": 6
       },
       "TC24": {
-        "scenario": "acesso home com visual_user",
-        "usernameRef": "visual"
+        "scenario": "manter estado do carrinho ao navegar para detalhes e voltar",
+        "productName": "Sauce Labs Backpack",
+        "expectedCartBadgeBeforeNavigation": 1,
+        "expectedCartBadgeAfterNavigation": 1
       }
     }
   }

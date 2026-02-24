@@ -206,6 +206,8 @@ public abstract class BaseTest {
 
             try (OutputStream output = Files.newOutputStream(allureResultsDir.resolve("environment.properties"))) {
                 environment.store(output, "Allure Environment");
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to write environment.properties", e);
             }
 
             String categoriesJson = "[\n"
