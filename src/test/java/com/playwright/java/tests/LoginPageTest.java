@@ -184,8 +184,8 @@ public class LoginPageTest extends BaseTest {
 
     @Test
     @Tag("login")
-    @Tag("tc25")
-    @DisplayName("TC25 - Deve logar com problem_user e acessar inventário")
+        @Tag("tc08")
+        @DisplayName("TC08 - Deve logar com problem_user e acessar inventário")
     @Story("Alternative Valid Users")
     @Severity(SeverityLevel.NORMAL)
     @Description("Valida login com problem_user e acesso à home de inventário.")
@@ -202,8 +202,8 @@ public class LoginPageTest extends BaseTest {
 
     @Test
     @Tag("login")
-    @Tag("tc26")
-    @DisplayName("TC26 - Deve logar com error_user e acessar inventário")
+        @Tag("tc09")
+        @DisplayName("TC09 - Deve logar com error_user e acessar inventário")
     @Story("Alternative Valid Users")
     @Severity(SeverityLevel.NORMAL)
     @Description("Valida login com error_user e acesso à home de inventário.")
@@ -220,8 +220,8 @@ public class LoginPageTest extends BaseTest {
 
     @Test
     @Tag("login")
-    @Tag("tc27")
-    @DisplayName("TC27 - Deve logar com visual_user e acessar inventário")
+        @Tag("tc10")
+        @DisplayName("TC10 - Deve logar com visual_user e acessar inventário")
     @Story("Alternative Valid Users")
     @Severity(SeverityLevel.NORMAL)
     @Description("Valida login com visual_user e acesso à home de inventário.")

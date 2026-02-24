@@ -1,6 +1,5 @@
 package com.playwright.java.tests;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.playwright.java.base.BaseTest;
@@ -27,8 +26,8 @@ public class ComponentsTest extends BaseTest {
     @Test
     @Tag("components")
     @Tag("header")
-    @Tag("tc29")
-    @DisplayName("TC29 - Deve exibir componentes globais do header")
+        @Tag("tc30")
+        @DisplayName("TC30 - Deve exibir componentes globais do header")
     @Story("Header")
     @Severity(SeverityLevel.NORMAL)
     @Description("Valida presença dos componentes globais do header: primary header, botão de menu e ícone do carrinho.")
@@ -36,20 +35,15 @@ public class ComponentsTest extends BaseTest {
         Allure.step("Dado que o usuário está na Home autenticado", () ->
                 assertTrue(homePage.isLoaded()));
 
-        Allure.step("Então o header principal deve estar visível", () ->
-                assertTrue(componentsPage.isPrimaryHeaderVisible()));
-
-        Allure.step("E os componentes de menu e carrinho devem estar visíveis", () -> {
-            assertTrue(componentsPage.isMenuButtonVisible());
-            assertTrue(componentsPage.isCartIconVisible());
-        });
+        Allure.step("Então os componentes globais do header devem estar visíveis", () ->
+                assertTrue(componentsPage.hasVisibleHeaderComponents()));
     }
 
     @Test
     @Tag("components")
     @Tag("menu")
-    @Tag("tc30")
-    @DisplayName("TC30 - Deve abrir menu lateral e exibir opções esperadas")
+        @Tag("tc31")
+        @DisplayName("TC31 - Deve abrir menu lateral e exibir opções esperadas")
     @Story("Menu")
     @Severity(SeverityLevel.CRITICAL)
     @Description("Valida abertura do menu lateral e presença das opções All Items, About, Logout e Reset App State.")
@@ -57,24 +51,19 @@ public class ComponentsTest extends BaseTest {
         Allure.step("Dado que o usuário está na Home autenticado", () ->
                 assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando abrir o menu lateral", () ->
-                componentsPage.openMenu());
-
         Allure.step("Então o menu deve estar aberto com opções esperadas", () ->
-                assertTrue(componentsPage.hasExpectedMenuOptionsVisible()));
+                assertTrue(componentsPage.openMenuAndValidateExpectedOptions()));
 
         Allure.step("E a opção About deve apontar para o site da Sauce Labs", () -> {
-            String aboutHref = componentsPage.getAboutMenuHref();
-            assertNotNull(aboutHref);
-            assertTrue(aboutHref.contains("saucelabs.com"));
+            assertTrue(componentsPage.hasValidAboutMenuLink());
         });
     }
 
     @Test
     @Tag("components")
     @Tag("menu")
-    @Tag("tc31")
-    @DisplayName("TC31 - Deve fechar menu lateral no botão Close Menu")
+        @Tag("tc32")
+        @DisplayName("TC32 - Deve fechar menu lateral no botão Close Menu")
     @Story("Menu")
     @Severity(SeverityLevel.NORMAL)
     @Description("Valida fechamento do menu lateral pelo botão Close Menu e ocultação das opções.")
@@ -83,8 +72,7 @@ public class ComponentsTest extends BaseTest {
                 assertTrue(homePage.isLoaded()));
 
         Allure.step("E que o menu lateral foi aberto", () -> {
-            componentsPage.openMenu();
-            assertTrue(componentsPage.isMenuOpen());
+                        assertTrue(componentsPage.openMenuAndValidateOpen());
         });
 
         Allure.step("Quando fechar o menu no botão Close Menu", () ->
@@ -97,8 +85,8 @@ public class ComponentsTest extends BaseTest {
     @Test
     @Tag("components")
     @Tag("cart")
-    @Tag("tc18")
-    @DisplayName("TC18 - Deve abrir página de carrinho")
+        @Tag("tc33")
+        @DisplayName("TC33 - Deve abrir página de carrinho")
     @Story("Cart")
     @Severity(SeverityLevel.NORMAL)
     @Description("Navega para a página de carrinho usando componente global do header.")
@@ -106,19 +94,16 @@ public class ComponentsTest extends BaseTest {
         Allure.step("Dado que o usuário está na Home autenticado", () ->
                 assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando clicar no ícone global do carrinho", () ->
-                componentsPage.openCart());
-
         Allure.step("Então a página de carrinho deve ser exibida", () ->
-                assertTrue(componentsPage.isCartPageLoaded()));
+                assertTrue(componentsPage.openCartAndValidateLoaded()));
     }
 
     @Test
     @Tag("components")
     @Tag("menu")
-    @Tag("tc19")
+        @Tag("tc34")
         @Tag("known-bug")
-    @DisplayName("TC19 - Deve resetar estado e voltar botão Backpack para Add to cart")
+        @DisplayName("TC34 - Deve resetar estado e voltar botão Backpack para Add to cart")
     @Story("Menu")
     @Severity(SeverityLevel.CRITICAL)
         @Description("Valida reset de estado do menu global, incluindo badge e estado visual do botão do item. Defeito conhecido: após reset, o botão pode permanecer como Remove.")
@@ -134,8 +119,7 @@ public class ComponentsTest extends BaseTest {
                 assertTrue(homePage.isLoaded()));
 
         Allure.step("E que o produto Backpack foi adicionado", () -> {
-            componentsPage.addBackpackToCart();
-            assertTrue(componentsPage.isBackpackAddedToCart());
+                        assertTrue(componentsPage.addBackpackAndValidateAdded());
         });
 
         Allure.step("E o badge deve exibir 1 item", () ->
@@ -147,24 +131,15 @@ public class ComponentsTest extends BaseTest {
         Allure.step("Então o badge deve voltar para 0", () ->
                 assertTrue(componentsPage.hasCartBadgeCount(0)));
 
-        Allure.step("E analisar estado do botão Backpack após reset (bug conhecido)", () -> {
-                boolean backpackReadyToAdd = componentsPage.isBackpackReadyToAdd();
-                if (!backpackReadyToAdd) {
-                        Allure.addAttachment(
-                                        "Known Defect Observed",
-                                        "text/plain",
-                                        "Reset App State zerou o badge, mas o botão Backpack não voltou para Add to cart.",
-                                        ".txt");
-                }
-                assertTrue(true);
-        });
+        Allure.step("E analisar estado do botão Backpack após reset (bug conhecido)", () ->
+                assertTrue(componentsPage.validateBackpackStateAfterResetKnownBug()));
     }
 
     @Test
     @Tag("components")
     @Tag("menu")
-    @Tag("tc20")
-    @DisplayName("TC20 - Deve fazer logout pelo menu global")
+        @Tag("tc35")
+        @DisplayName("TC35 - Deve fazer logout pelo menu global")
     @Story("Menu")
     @Severity(SeverityLevel.CRITICAL)
     @Description("Realiza logout via menu global e valida retorno para tela de login.")
@@ -182,16 +157,15 @@ public class ComponentsTest extends BaseTest {
         @Test
         @Tag("components")
         @Tag("menu")
-        @Tag("tc32")
-        @DisplayName("TC32 - Deve voltar para inventário usando All Items")
+        @Tag("tc36")
+        @DisplayName("TC36 - Deve voltar para inventário usando All Items")
         @Story("Menu")
         @Severity(SeverityLevel.NORMAL)
         @Description("Valida navegação para o inventário a partir da opção All Items no menu lateral.")
         void shouldNavigateToInventoryByAllItemsOption() {
                 Allure.step("Dado que o usuário abriu a página de carrinho", () -> {
                         assertTrue(homePage.isLoaded());
-                        componentsPage.openCart();
-                        assertTrue(componentsPage.isCartPageLoaded());
+                        assertTrue(componentsPage.openCartAndValidateLoaded());
                 });
 
                 Allure.step("Quando selecionar All Items no menu lateral", () ->
