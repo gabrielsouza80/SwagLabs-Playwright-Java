@@ -21,7 +21,7 @@ import com.playwright.java.pages.HomePage;
 // Suíte de testes da HomePage com foco em funcionalidades principais.
 @Epic("Web Automation")
 @Feature("Homepage")
-@Owner("gabriel")
+@Owner("Gabriel Souza")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class HomePageTest extends BaseTest {
 
@@ -32,7 +32,7 @@ public class HomePageTest extends BaseTest {
     @Tag("tc08")
     @DisplayName("TC08 - Deve exibir elementos principais da home")
     @Story("Home Load")
-    @Owner("gabriel")
+    @Owner("Gabriel Souza")
     @Severity(SeverityLevel.CRITICAL)
     @Description("Valida carregamento da home após login e presença dos principais componentes da tela.")
     void shouldDisplayHomePageMainElements() {

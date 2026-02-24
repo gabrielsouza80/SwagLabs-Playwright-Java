@@ -18,7 +18,7 @@ import com.playwright.java.base.BaseTest;
 // Suíte de testes da página de detalhes do produto.
 @Epic("Web Automation")
 @Feature("Product Details")
-@Owner("gabriel")
+@Owner("Gabriel Souza")
 public class ProductDetailsTest extends BaseTest {
     private static final String BACKPACK_PRODUCT_NAME = "Sauce Labs Backpack";
     private static final String BACKPACK_PRODUCT_PRICE = "$29.99";

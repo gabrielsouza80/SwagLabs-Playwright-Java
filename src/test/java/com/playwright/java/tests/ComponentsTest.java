@@ -19,7 +19,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 @Epic("Web Automation")
 @Feature("Shared Components")
-@Owner("gabriel")
+@Owner("Gabriel Souza")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class ComponentsTest extends BaseTest {
 

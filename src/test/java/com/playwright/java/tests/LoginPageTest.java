@@ -21,7 +21,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 @Epic("Web Automation")
 @Feature("Authentication")
-@Owner("gabriel")
+@Owner("Gabriel Souza")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class LoginPageTest extends BaseTest {
 
