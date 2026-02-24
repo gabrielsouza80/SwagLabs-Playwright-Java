@@ -27,15 +27,19 @@ src/
         BaseTest.java
       config/
         TestConfig.java
+        TestData.java
       pages/
         HomePage.java
         InventoryPage.java
         LoginPage.java
       tests/
         HomePageTest.java
-        SauceDemoLoginTest.java
+        LoginTest.java
     resources/
-      config.properties
+      config/
+        config.properties
+      data/
+        tests-data.json
 ```
 
 ## Pré-requisitos
@@ -46,7 +50,7 @@ src/
 
 ## Configuração
 
-Arquivo principal: `src/test/resources/config.properties`
+Arquivo principal: `src/test/resources/config/config.properties`
 
 ```properties
 baseUrl=https://www.saucedemo.com/
@@ -61,6 +65,11 @@ Regras de leitura da configuração:
 2. Valor presente em `config.properties`
 
 > Observação: as chaves `baseUrl`, `username`, `password` e `headless` são obrigatórias.
+
+Dados de teste centralizados:
+
+- Arquivo: `src/test/resources/data/tests-data.json`
+- Uso: mensagens esperadas, opções de sort, usuários alternativos e demais valores de cenário
 
 ## Execução dos testes
 
@@ -85,7 +94,7 @@ mvn -Dtest=HomePageTest test
 Executar um método:
 
 ```bash
-mvn -Dtest=SauceDemoLoginTest#shouldLoginWithStandardUser test
+mvn -Dtest=LoginTest#shouldLoginWithStandardUser test
 ```
 
 Executar por tag:

@@ -1,6 +1,7 @@
 package com.playwright.java.pages;
 
 import com.microsoft.playwright.Page;
+import com.playwright.java.config.TestData;
 import io.qameta.allure.Step;
 import java.util.Comparator;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 // Reúne ações e validações funcionais da página principal após login.
 public class HomePage {
     private final Page page;
+    private final TestData testData;
 
     // Seletores dos elementos importantes da home.
     private static final String TITLE = "[data-test='title']";
@@ -30,6 +32,7 @@ public class HomePage {
 
     public HomePage(Page page) {
         this.page = page;
+        this.testData = TestData.get();
     }
 
     // Validação principal de carregamento da home.
@@ -37,7 +40,7 @@ public class HomePage {
     public boolean isLoaded() {
         return page.url().contains("/inventory.html")
                 && page.locator(INVENTORY_LIST).isVisible()
-                && "Products".equals(page.locator(TITLE).innerText().trim());
+                && testData.expected("homeTitle").equals(page.locator(TITLE).innerText().trim());
     }
 
     // Conta quantos produtos existem na listagem.
@@ -58,10 +61,42 @@ public class HomePage {
         return page.locator(ACTIVE_SORT_OPTION).innerText().trim();
     }
 
+    public boolean hasExpectedTitle() {
+        return testData.expected("homeTitle").equals(getPageTitle());
+    }
+
+    public boolean hasDefaultSortOption() {
+        return testData.expected("defaultSortLabel").equals(getActiveSortOption());
+    }
+
+    public boolean hasExpectedInventoryItemCount() {
+        return getInventoryItemCount() == testData.expectedInt("inventoryItemCount");
+    }
+
     // Altera ordenação via value do select: az, za, lohi, hilo.
     @Step("Ordenar produtos por opção: {optionValue}")
     public void sortBy(String optionValue) {
         page.locator(SORT_DROPDOWN).selectOption(optionValue);
+    }
+
+    @Step("Ordenar por nome crescente (A-Z)")
+    public void sortByNameAscending() {
+        sortBy(testData.sortOption("nameAsc"));
+    }
+
+    @Step("Ordenar por nome decrescente (Z-A)")
+    public void sortByNameDescending() {
+        sortBy(testData.sortOption("nameDesc"));
+    }
+
+    @Step("Ordenar por preço crescente (low to high)")
+    public void sortByPriceAscending() {
+        sortBy(testData.sortOption("priceAsc"));
+    }
+
+    @Step("Ordenar por preço decrescente (high to low)")
+    public void sortByPriceDescending() {
+        sortBy(testData.sortOption("priceDesc"));
     }
 
     // Captura os nomes de todos os produtos visíveis.
@@ -133,6 +168,10 @@ public class HomePage {
         return Integer.parseInt(page.locator(CART_BADGE).innerText().trim());
     }
 
+    public boolean hasCartBadgeCount(int expectedCount) {
+        return getCartBadgeCount() == expectedCount;
+    }
+
     // Abre a tela do carrinho.
     @Step("Abrir página do carrinho")
     public void openCart() {
@@ -142,7 +181,7 @@ public class HomePage {
     // Valida se está na página de carrinho.
     public boolean isCartPageLoaded() {
         return page.url().contains("/cart.html")
-                && "Your Cart".equals(page.locator(TITLE).innerText().trim());
+                && testData.expected("cartTitle").equals(page.locator(TITLE).innerText().trim());
     }
 
     // Abre menu lateral hamburguer.

@@ -1,0 +1,157 @@
+{
+  "meta": {
+    "project": "playwright-java-saucedemo",
+    "version": "1.0",
+    "description": "Dados de teste organizados por caso (TCxx)"
+  },
+  "global": {
+    "baseUrl": "https://www.saucedemo.com/",
+    "password": "secret_sauce",
+    "expected": {
+      "homeTitle": "Products",
+      "cartTitle": "Your Cart",
+      "defaultSortLabel": "Name (A to Z)",
+      "inventoryItemCount": 6
+    },
+    "users": {
+      "standard": "standard_user",
+      "lockedOut": "locked_out_user",
+      "problem": "problem_user",
+      "performanceGlitch": "performance_glitch_user",
+      "error": "error_user",
+      "visual": "visual_user"
+    },
+    "sortOptions": {
+      "nameAsc": "az",
+      "nameDesc": "za",
+      "priceAsc": "lohi",
+      "priceDesc": "hilo"
+    },
+    "errors": {
+      "usernameRequired": "Username is required",
+      "passwordRequired": "Password is required",
+      "lockedOut": "locked out"
+    }
+  },
+  "tests": {
+    "LoginTest": {
+      "TC01": {
+        "scenario": "login padrão com sucesso",
+        "usernameRef": "standard"
+      },
+      "TC02": {
+        "scenario": "validar layout da tela de login",
+        "checks": [
+          "logoVisible",
+          "loginButtonVisible",
+          "credentialsPanelVisible"
+        ]
+      },
+      "TC03": {
+        "scenario": "validar usuários aceitos e senha padrão",
+        "expectedUsersRefs": [
+          "standard",
+          "lockedOut",
+          "problem",
+          "performanceGlitch",
+          "error",
+          "visual"
+        ],
+        "expectedPassword": "secret_sauce"
+      },
+      "TC04": {
+        "scenario": "erro sem usuário",
+        "input": {
+          "username": "",
+          "passwordRef": "global.password"
+        },
+        "expectedErrorRef": "usernameRequired"
+      },
+      "TC05": {
+        "scenario": "erro sem senha",
+        "input": {
+          "usernameRef": "standard",
+          "password": ""
+        },
+        "expectedErrorRef": "passwordRequired"
+      },
+      "TC06": {
+        "scenario": "erro usuário bloqueado",
+        "usernameRef": "lockedOut",
+        "expectedErrorRef": "lockedOut"
+      },
+      "TC07": {
+        "scenario": "login com performance_glitch_user",
+        "usernameRef": "performanceGlitch"
+      }
+    },
+    "HomePageTest": {
+      "TC08": {
+        "scenario": "elementos principais visíveis"
+      },
+      "TC09": {
+        "scenario": "título da home",
+        "expectedTitleRef": "homeTitle"
+      },
+      "TC10": {
+        "scenario": "ordenação padrão",
+        "expectedSortRef": "defaultSortLabel"
+      },
+      "TC11": {
+        "scenario": "quantidade de itens",
+        "expectedCountRef": "inventoryItemCount"
+      },
+      "TC12": {
+        "scenario": "ordenação nome crescente",
+        "sortOptionRef": "nameAsc"
+      },
+      "TC13": {
+        "scenario": "ordenação nome decrescente",
+        "sortOptionRef": "nameDesc"
+      },
+      "TC14": {
+        "scenario": "ordenação preço crescente",
+        "sortOptionRef": "priceAsc"
+      },
+      "TC15": {
+        "scenario": "ordenação preço decrescente",
+        "sortOptionRef": "priceDesc"
+      },
+      "TC16": {
+        "scenario": "adicionar backpack no carrinho",
+        "expectedCartBadge": 1
+      },
+      "TC17": {
+        "scenario": "remover backpack do carrinho",
+        "expectedCartBadge": 0
+      },
+      "TC18": {
+        "scenario": "abrir carrinho"
+      },
+      "TC19": {
+        "scenario": "reset app state",
+        "badgeBeforeReset": 1,
+        "badgeAfterReset": 0
+      },
+      "TC20": {
+        "scenario": "logout"
+      },
+      "TC21": {
+        "scenario": "acesso home com problem_user",
+        "usernameRef": "problem"
+      },
+      "TC22": {
+        "scenario": "acesso home com performance_glitch_user",
+        "usernameRef": "performanceGlitch"
+      },
+      "TC23": {
+        "scenario": "acesso home com error_user",
+        "usernameRef": "error"
+      },
+      "TC24": {
+        "scenario": "acesso home com visual_user",
+        "usernameRef": "visual"
+      }
+    }
+  }
+}

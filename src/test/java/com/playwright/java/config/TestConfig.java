@@ -12,13 +12,35 @@ public class TestConfig {
     private final String username;
     private final String password;
     private final boolean headless;
+    private final int viewportWidth;
+    private final int viewportHeight;
+    private final int defaultTimeoutMs;
+    private final int navigationTimeoutMs;
+    private final int slowMoMs;
+    private final boolean screenshotOnTeardown;
 
     // Construtor privado: força a criação via método load().
-    private TestConfig(String baseUrl, String username, String password, boolean headless) {
+    private TestConfig(
+            String baseUrl,
+            String username,
+            String password,
+            boolean headless,
+            int viewportWidth,
+            int viewportHeight,
+            int defaultTimeoutMs,
+            int navigationTimeoutMs,
+            int slowMoMs,
+            boolean screenshotOnTeardown) {
         this.baseUrl = baseUrl;
         this.username = username;
         this.password = password;
         this.headless = headless;
+        this.viewportWidth = viewportWidth;
+        this.viewportHeight = viewportHeight;
+        this.defaultTimeoutMs = defaultTimeoutMs;
+        this.navigationTimeoutMs = navigationTimeoutMs;
+        this.slowMoMs = slowMoMs;
+        this.screenshotOnTeardown = screenshotOnTeardown;
     }
 
     // Lê configurações do arquivo config.properties
@@ -27,8 +49,8 @@ public class TestConfig {
         // Estrutura que armazena pares chave=valor.
         Properties properties = new Properties();
 
-        // Tenta ler o arquivo src/test/resources/config.properties do classpath.
-        try (InputStream input = TestConfig.class.getClassLoader().getResourceAsStream("config.properties")) {
+        // Tenta ler o arquivo src/test/resources/config/config.properties do classpath.
+        try (InputStream input = TestConfig.class.getClassLoader().getResourceAsStream("config/config.properties")) {
             if (input == null) {
                 throw new IllegalStateException("config.properties was not found in test resources");
             }
@@ -43,9 +65,25 @@ public class TestConfig {
         String username = readRequiredSetting("username", properties);
         String password = readRequiredSetting("password", properties);
         boolean headless = Boolean.parseBoolean(readRequiredSetting("headless", properties));
+        int viewportWidth = readOptionalIntSetting("viewportWidth", properties, 1280);
+        int viewportHeight = readOptionalIntSetting("viewportHeight", properties, 720);
+        int defaultTimeoutMs = readOptionalIntSetting("defaultTimeoutMs", properties, 15_000);
+        int navigationTimeoutMs = readOptionalIntSetting("navigationTimeoutMs", properties, 30_000);
+        int slowMoMs = readOptionalIntSetting("slowMoMs", properties, 0);
+        boolean screenshotOnTeardown = readOptionalBooleanSetting("screenshotOnTeardown", properties, true);
 
         // Retorna um objeto imutável de configuração.
-        return new TestConfig(baseUrl, username, password, headless);
+        return new TestConfig(
+            baseUrl,
+            username,
+            password,
+            headless,
+            viewportWidth,
+            viewportHeight,
+            defaultTimeoutMs,
+            navigationTimeoutMs,
+            slowMoMs,
+            screenshotOnTeardown);
     }
 
     // Getters no estilo Java moderno (nome curto).
@@ -65,6 +103,30 @@ public class TestConfig {
         return headless;
     }
 
+    public int viewportWidth() {
+        return viewportWidth;
+    }
+
+    public int viewportHeight() {
+        return viewportHeight;
+    }
+
+    public int defaultTimeoutMs() {
+        return defaultTimeoutMs;
+    }
+
+    public int navigationTimeoutMs() {
+        return navigationTimeoutMs;
+    }
+
+    public int slowMoMs() {
+        return slowMoMs;
+    }
+
+    public boolean screenshotOnTeardown() {
+        return screenshotOnTeardown;
+    }
+
     private static String readRequiredSetting(String key, Properties properties) {
         String value = System.getProperty(key);
         if (value == null || value.isBlank()) {
@@ -76,5 +138,39 @@ public class TestConfig {
         }
 
         return value.trim();
+    }
+
+    private static int readOptionalIntSetting(String key, Properties properties, int defaultValue) {
+        String value = System.getProperty(key);
+        if (value == null || value.isBlank()) {
+            value = properties.getProperty(key);
+        }
+
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+
+        try {
+            int parsed = Integer.parseInt(value.trim());
+            if (parsed < 0) {
+                throw new IllegalStateException("Configuration key must be >= 0: " + key);
+            }
+            return parsed;
+        } catch (NumberFormatException exception) {
+            throw new IllegalStateException("Invalid integer value for configuration key: " + key, exception);
+        }
+    }
+
+    private static boolean readOptionalBooleanSetting(String key, Properties properties, boolean defaultValue) {
+        String value = System.getProperty(key);
+        if (value == null || value.isBlank()) {
+            value = properties.getProperty(key);
+        }
+
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+
+        return Boolean.parseBoolean(value.trim());
     }
 }
