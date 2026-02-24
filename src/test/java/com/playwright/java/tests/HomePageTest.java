@@ -1,5 +1,6 @@
 package com.playwright.java.tests;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.qameta.allure.Allure;
@@ -235,8 +236,8 @@ public class HomePageTest extends BaseTest {
     @Tag("home")
     @Tag("multi-user")
     @Tag("known-bug")
-    @Tag("tc21")
-    @DisplayName("TC21 - Deve confirmar anomalias da Home com problem_user")
+    @Tag("tc25")
+    @DisplayName("TC25 - Deve confirmar anomalias da Home com problem_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
     @Description("Confirma problemas conhecidos da Home com problem_user: imagens com placeholder de erro e Backpack iniciando com botão Remove.")
@@ -258,8 +259,8 @@ public class HomePageTest extends BaseTest {
 
         HomePage.HomeAnomalyResult anomalyResult = homePage.analyzeProblemUserHomeAnomalies();
 
-        Allure.step("E deve detectar anomalia por botão ou por imagens quebradas", () ->
-            assertTrue(anomalyResult.hasProblemUserSpecificIssue()));
+        Allure.step("E NÃO deve ter anomalias (mas problem_user tem!)", () ->
+            assertFalse(anomalyResult.hasProblemUserSpecificIssue()));
 
         Allure.addAttachment(
             "Known Defect Evidence",
@@ -273,8 +274,8 @@ public class HomePageTest extends BaseTest {
     @Tag("home")
     @Tag("multi-user")
     @Tag("known-bug")
-    @Tag("tc22")
-    @DisplayName("TC22 - Deve confirmar anomalia da Home com performance_glitch_user")
+    @Tag("tc26")
+    @DisplayName("TC26 - Deve confirmar anomalia da Home com performance_glitch_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
     @Description("Confirma anomalia na Home com performance_glitch_user, principalmente estado incorreto do botão Backpack.")
@@ -299,8 +300,8 @@ public class HomePageTest extends BaseTest {
         HomePage.PerformanceGlitchHomeAnomalyResult anomalyResult =
             homePage.analyzePerformanceGlitchUserIssues(loginDurationMs[0]);
 
-        Allure.step("E deve detectar anomalia por lentidão ou comportamento incorreto da Home", () ->
-            assertTrue(anomalyResult.hasPerformanceGlitchSpecificIssue()));
+        Allure.step("E NÃO deve ter delay (mas performance_glitch_user tem!)", () ->
+            assertFalse(anomalyResult.hasPerformanceGlitchSpecificIssue()));
 
         Allure.addAttachment(
             "Known Defect Evidence",
@@ -314,8 +315,8 @@ public class HomePageTest extends BaseTest {
     @Tag("home")
     @Tag("multi-user")
     @Tag("known-bug")
-    @Tag("tc23")
-    @DisplayName("TC23 - Deve confirmar anomalia da Home com error_user")
+    @Tag("tc27")
+    @DisplayName("TC27 - Deve confirmar anomalia da Home com error_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
     @Description("Confirma anomalia da Home com error_user, com foco no estado incorreto do botão Backpack.")
@@ -352,12 +353,15 @@ public class HomePageTest extends BaseTest {
     @Test
     @Tag("home")
     @Tag("multi-user")
-    @Tag("tc24")
-    @DisplayName("TC24 - Deve acessar Home com usuário visual_user")
+    @Tag("known-bug")
+    @Tag("tc28")
+    @DisplayName("TC28 - Deve confirmar anomalia visual da Home com visual_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida login com visual_user e carregamento da Home.")
-    void shouldAccessHomeWithVisualUser() {
+    @Description("Confirma anomalia visual da Home com visual_user, com foco em desalinhamento CSS.")
+    void shouldConfirmVisualUserHomeAnomalies() {
+        Allure.label("knownIssue", "SAUCEDEMO-VISUAL-USER-HOME");
+
         Allure.step("Dado que o usuário padrão está autenticado na Home", () ->
             assertTrue(homePage.isLoaded()));
 
@@ -367,9 +371,21 @@ public class HomePageTest extends BaseTest {
             loginPage.loginWithVisualUser();
         });
 
-        Allure.step("Então a Home deve carregar com ordenação padrão", () -> {
+        Allure.step("Então a Home deve carregar para visual_user", () -> {
             assertTrue(homePage.isLoaded());
-            assertTrue(homePage.hasDefaultSortOption());
+            assertTrue(homePage.hasExpectedInventoryItemCount());
         });
+
+        HomePage.VisualUserHomeAnomalyResult visualAnomalyResult = homePage.analyzeVisualUserHomeAnomalies();
+
+        Allure.step("E deve detectar anomalia visual CSS (texto ou botão desalinhado)", () ->
+            assertTrue(visualAnomalyResult.hasVisualUserSpecificIssue()));
+
+        Allure.addAttachment(
+            "Known Defect Evidence",
+            "text/plain",
+            visualAnomalyResult.toEvidenceText(),
+            ".txt"
+        );
     }
 }

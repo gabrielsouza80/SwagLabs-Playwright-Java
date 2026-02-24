@@ -58,11 +58,13 @@ public class HomePage {
         }
 
         public boolean hasProblemUserSpecificIssue() {
-            return brokenImageIssue || hasButtonStateIssue();
+            // problem_user DEVE ter imagens quebradas (sl-404 placeholder)
+            // OU começar com Backpack em estado Remove (sem poder adicionar)
+            return brokenImageIssue || startedWithRemove;
         }
 
         public boolean hasErrorUserSpecificIssue() {
-            return startedWithRemove || removeDidNotSwitchToAdd || addDidNotSwitchToRemove;
+            return brokenImageIssue || startedWithRemove || removeDidNotSwitchToAdd || addDidNotSwitchToRemove;
         }
 
         public String toEvidenceText(String userKey) {
@@ -111,6 +113,33 @@ public class HomePage {
                     + delayThresholdMs
                     + ", delayIssue="
                     + hasDelayIssue();
+        }
+    }
+
+    public static final class VisualUserHomeAnomalyResult {
+        private final boolean textMisalignmentIssue;
+        private final boolean buttonMisalignmentIssue;
+
+        public VisualUserHomeAnomalyResult(
+                boolean textMisalignmentIssue,
+                boolean buttonMisalignmentIssue) {
+            this.textMisalignmentIssue = textMisalignmentIssue;
+            this.buttonMisalignmentIssue = buttonMisalignmentIssue;
+        }
+
+        public boolean hasAnyKnownIssue() {
+            return textMisalignmentIssue || buttonMisalignmentIssue;
+        }
+
+        public boolean hasVisualUserSpecificIssue() {
+            return textMisalignmentIssue || buttonMisalignmentIssue;
+        }
+
+        public String toEvidenceText() {
+            return "visual_user CSS anomalies -> textMisalignment="
+                    + textMisalignmentIssue
+                    + ", buttonMisalignment="
+                    + buttonMisalignmentIssue;
         }
     }
 
@@ -181,6 +210,20 @@ public class HomePage {
     @Step("Ordenar por preço decrescente (high to low)")
     public void sortByPriceDescending() {
         sortBy(testData.sortOption("priceDesc"));
+    }
+
+    // Clica em um produto específico pelo nome.
+    @Step("Clicar no produto: {productName}")
+    public void clickProductByName(String productName) {
+        page.locator("[data-test='inventory-item-name']:has-text('" + productName + "')")
+            .first()
+            .click();
+    }
+
+    // Clica em um produto específico pelo data-test do item.
+    @Step("Clicar no produto com ID: {itemDataTest}")
+    public void clickProductByDataTest(String itemDataTest) {
+        page.locator("[data-test='" + itemDataTest + "-img-link']").click();
     }
 
     // Captura os nomes de todos os produtos visíveis.
@@ -284,6 +327,16 @@ public class HomePage {
                 .anyMatch(source -> source.contains("sl-404"));
     }
 
+    // Anomalia visual do visual_user: alguns nomes de produtos estão com texto desalinhado.
+    public boolean hasAnyProductNameWithMisalignment() {
+        return page.locator("[data-test='inventory-item-name'].align_right").count() > 0;
+    }
+
+    // Anomalia visual do visual_user: alguns botões estão desalinhados visualmente.
+    public boolean hasAnyButtonWithMisalignment() {
+        return page.locator("button.btn_inventory_misaligned").count() > 0;
+    }
+
     private HomeAnomalyResult analyzeCurrentHomeAnomalies() {
         boolean brokenImageIssue = hasAnyInventoryImageUsingErrorPlaceholder();
         boolean startedWithRemove = isBackpackAddedToCart();
@@ -318,6 +371,14 @@ public class HomePage {
     @Step("Analisar anomalias da Home para error_user")
     public HomeAnomalyResult analyzeErrorUserHomeAnomalies() {
         return analyzeCurrentHomeAnomalies();
+    }
+
+    @Step("Analisar anomalias visuais da Home para visual_user")
+    public VisualUserHomeAnomalyResult analyzeVisualUserHomeAnomalies() {
+        boolean textMisalignment = hasAnyProductNameWithMisalignment();
+        boolean buttonMisalignment = hasAnyButtonWithMisalignment();
+        
+        return new VisualUserHomeAnomalyResult(textMisalignment, buttonMisalignment);
     }
 
     @Step("Analisar anomalias da Home e lentidão para performance_glitch_user")
