@@ -1,7 +1,6 @@
 package com.playwright.java.tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import com.playwright.java.base.BaseTest;
+import com.playwright.java.pages.HomePage;
 
 // Suíte de testes da HomePage com foco em funcionalidades principais.
 @Epic("Web Automation")
@@ -256,22 +256,15 @@ public class HomePageTest extends BaseTest {
             assertTrue(homePage.hasExpectedInventoryItemCount());
         });
 
-        boolean hasBrokenImageIssue = homePage.hasAnyInventoryImageUsingErrorPlaceholder();
-        boolean removeClickedWithoutAdd = homePage.tryRemoveBackpackWithoutAdding();
+        HomePage.HomeAnomalyResult anomalyResult = homePage.analyzeProblemUserHomeAnomalies();
 
-        Allure.step("E deve confirmar anomalia de imagem quebrada (placeholder sl-404)", () ->
-            assertTrue(hasBrokenImageIssue));
-
-        Allure.step("E não deve permitir remover Backpack sem adicionar antes (defeito conhecido)", () ->
-            assertFalse(removeClickedWithoutAdd));
+        Allure.step("E deve detectar anomalia por botão ou por imagens quebradas", () ->
+            assertTrue(anomalyResult.hasProblemUserSpecificIssue()));
 
         Allure.addAttachment(
             "Known Defect Evidence",
             "text/plain",
-            "Problem user anomalies -> brokenImage="
-                + hasBrokenImageIssue
-                + ", removeClickedWithoutAdd="
-                + removeClickedWithoutAdd,
+            anomalyResult.toEvidenceText("problem_user"),
             ".txt"
         );
     }
@@ -279,36 +272,56 @@ public class HomePageTest extends BaseTest {
     @Test
     @Tag("home")
     @Tag("multi-user")
+    @Tag("known-bug")
     @Tag("tc22")
-    @DisplayName("TC22 - Deve acessar Home com usuário performance_glitch_user")
+    @DisplayName("TC22 - Deve confirmar anomalia da Home com performance_glitch_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida login com performance_glitch_user e carregamento da Home.")
-    void shouldAccessHomeWithPerformanceGlitchUser() {
+    @Description("Confirma anomalia na Home com performance_glitch_user, principalmente estado incorreto do botão Backpack.")
+    void shouldConfirmPerformanceGlitchUserHomeAnomalies() {
+        Allure.label("knownIssue", "SAUCEDEMO-PERFORMANCE-GLITCH-HOME");
+        final long[] loginDurationMs = new long[] {0L};
+
         Allure.step("Dado que o usuário padrão está autenticado na Home", () ->
             assertTrue(homePage.isLoaded()));
 
         Allure.step("Quando fizer logout e login com performance_glitch_user", () -> {
             homePage.logout();
             assertTrue(loginPage.isLoaded());
-            loginPage.loginWithPerformanceGlitchUser();
+            loginDurationMs[0] = loginPage.loginWithPerformanceGlitchUserAndMeasureDurationMs();
         });
 
-        Allure.step("Então a Home deve carregar com título e estrutura esperados", () -> {
+        Allure.step("Então a Home deve carregar para performance_glitch_user", () -> {
             assertTrue(homePage.isLoaded());
-            assertTrue(homePage.hasExpectedTitle());
+            assertTrue(homePage.hasExpectedInventoryItemCount());
         });
+
+        HomePage.PerformanceGlitchHomeAnomalyResult anomalyResult =
+            homePage.analyzePerformanceGlitchUserIssues(loginDurationMs[0]);
+
+        Allure.step("E deve detectar anomalia por lentidão ou comportamento incorreto da Home", () ->
+            assertTrue(anomalyResult.hasPerformanceGlitchSpecificIssue()));
+
+        Allure.addAttachment(
+            "Known Defect Evidence",
+            "text/plain",
+            anomalyResult.toEvidenceText(),
+            ".txt"
+        );
     }
 
     @Test
     @Tag("home")
     @Tag("multi-user")
+    @Tag("known-bug")
     @Tag("tc23")
-    @DisplayName("TC23 - Deve acessar Home com usuário error_user")
+    @DisplayName("TC23 - Deve confirmar anomalia da Home com error_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida login com error_user e carregamento da Home.")
-    void shouldAccessHomeWithErrorUser() {
+    @Description("Confirma anomalia da Home com error_user, com foco no estado incorreto do botão Backpack.")
+    void shouldConfirmErrorUserHomeAnomalies() {
+        Allure.label("knownIssue", "SAUCEDEMO-ERROR-USER-HOME");
+
         Allure.step("Dado que o usuário padrão está autenticado na Home", () ->
             assertTrue(homePage.isLoaded()));
 
@@ -318,10 +331,22 @@ public class HomePageTest extends BaseTest {
             loginPage.loginWithErrorUser();
         });
 
-        Allure.step("Então a Home deve carregar com listagem de itens", () -> {
+        Allure.step("Então a Home deve carregar para error_user", () -> {
             assertTrue(homePage.isLoaded());
             assertTrue(homePage.hasExpectedInventoryItemCount());
         });
+
+        HomePage.HomeAnomalyResult anomalyResult = homePage.analyzeErrorUserHomeAnomalies();
+
+        Allure.step("E deve detectar anomalia no estado do botão Backpack", () ->
+            assertTrue(anomalyResult.hasErrorUserSpecificIssue()));
+
+        Allure.addAttachment(
+            "Known Defect Evidence",
+            "text/plain",
+            anomalyResult.toEvidenceText("error_user"),
+            ".txt"
+        );
     }
 
     @Test

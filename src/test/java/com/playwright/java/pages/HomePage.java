@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 // Page Object da Home/Inventory.
 // Reúne ações e validações funcionais da página principal após login.
 public class HomePage {
+    private static final long PERFORMANCE_GLITCH_DELAY_THRESHOLD_MS = 1500;
+
     private final Page page;
     private final TestData testData;
 
@@ -29,6 +31,88 @@ public class HomePage {
     private static final String PRODUCT_PRICE = "[data-test='inventory-item-price']";
     private static final String ADD_BACKPACK_BUTTON = "[data-test='add-to-cart-sauce-labs-backpack']";
     private static final String REMOVE_BACKPACK_BUTTON = "[data-test='remove-sauce-labs-backpack']";
+
+    public static final class HomeAnomalyResult {
+        private final boolean brokenImageIssue;
+        private final boolean startedWithRemove;
+        private final boolean removeDidNotSwitchToAdd;
+        private final boolean addDidNotSwitchToRemove;
+
+        public HomeAnomalyResult(
+                boolean brokenImageIssue,
+                boolean startedWithRemove,
+                boolean removeDidNotSwitchToAdd,
+                boolean addDidNotSwitchToRemove) {
+            this.brokenImageIssue = brokenImageIssue;
+            this.startedWithRemove = startedWithRemove;
+            this.removeDidNotSwitchToAdd = removeDidNotSwitchToAdd;
+            this.addDidNotSwitchToRemove = addDidNotSwitchToRemove;
+        }
+
+        public boolean hasAnyKnownIssue() {
+            return brokenImageIssue || startedWithRemove || removeDidNotSwitchToAdd || addDidNotSwitchToRemove;
+        }
+
+        public boolean hasButtonStateIssue() {
+            return startedWithRemove || removeDidNotSwitchToAdd || addDidNotSwitchToRemove;
+        }
+
+        public boolean hasProblemUserSpecificIssue() {
+            return brokenImageIssue || hasButtonStateIssue();
+        }
+
+        public boolean hasErrorUserSpecificIssue() {
+            return startedWithRemove || removeDidNotSwitchToAdd || addDidNotSwitchToRemove;
+        }
+
+        public String toEvidenceText(String userKey) {
+            return userKey + " anomalies -> brokenImage="
+                    + brokenImageIssue
+                    + ", startedWithRemove="
+                    + startedWithRemove
+                    + ", removeDidNotSwitchToAdd="
+                    + removeDidNotSwitchToAdd
+                    + ", addDidNotSwitchToRemove="
+                    + addDidNotSwitchToRemove;
+        }
+    }
+
+    public static final class PerformanceGlitchHomeAnomalyResult {
+        private final HomeAnomalyResult homeAnomalyResult;
+        private final long loginDurationMs;
+        private final long delayThresholdMs;
+
+        public PerformanceGlitchHomeAnomalyResult(
+                HomeAnomalyResult homeAnomalyResult,
+                long loginDurationMs,
+                long delayThresholdMs) {
+            this.homeAnomalyResult = homeAnomalyResult;
+            this.loginDurationMs = loginDurationMs;
+            this.delayThresholdMs = delayThresholdMs;
+        }
+
+        public boolean hasDelayIssue() {
+            return loginDurationMs >= delayThresholdMs;
+        }
+
+        public boolean hasAnyKnownIssue() {
+            return hasDelayIssue() || homeAnomalyResult.hasAnyKnownIssue();
+        }
+
+        public boolean hasPerformanceGlitchSpecificIssue() {
+            return hasDelayIssue();
+        }
+
+        public String toEvidenceText() {
+            return homeAnomalyResult.toEvidenceText("performance_glitch_user")
+                    + ", loginDurationMs="
+                    + loginDurationMs
+                    + ", delayThresholdMs="
+                    + delayThresholdMs
+                    + ", delayIssue="
+                    + hasDelayIssue();
+        }
+    }
 
     public HomePage(Page page) {
         this.page = page;
@@ -171,6 +255,11 @@ public class HomePage {
         return page.locator(REMOVE_BACKPACK_BUTTON).isVisible();
     }
 
+    public boolean isBackpackReadyToAdd() {
+        return page.locator(ADD_BACKPACK_BUTTON).isVisible()
+                && page.locator(REMOVE_BACKPACK_BUTTON).count() == 0;
+    }
+
     // Anomalia observada no problem_user: Backpack já aparece como Remove sem adicionar.
     public boolean isBackpackInIncorrectDefaultState() {
         return page.locator(REMOVE_BACKPACK_BUTTON).isVisible()
@@ -193,6 +282,51 @@ public class HomePage {
                 .map(locator -> locator.getAttribute("src"))
                 .filter(source -> source != null && !source.isBlank())
                 .anyMatch(source -> source.contains("sl-404"));
+    }
+
+    private HomeAnomalyResult analyzeCurrentHomeAnomalies() {
+        boolean brokenImageIssue = hasAnyInventoryImageUsingErrorPlaceholder();
+        boolean startedWithRemove = isBackpackAddedToCart();
+        boolean removeDidNotSwitchToAdd = false;
+        boolean addDidNotSwitchToRemove = false;
+
+        if (startedWithRemove) {
+            removeBackpackFromCart();
+            removeDidNotSwitchToAdd = !isBackpackReadyToAdd();
+        } else {
+            addBackpackToCart();
+            addDidNotSwitchToRemove = !isBackpackAddedToCart();
+        }
+
+        return new HomeAnomalyResult(
+                brokenImageIssue,
+                startedWithRemove,
+                removeDidNotSwitchToAdd,
+                addDidNotSwitchToRemove);
+    }
+
+    @Step("Analisar anomalias da Home para problem_user")
+    public HomeAnomalyResult analyzeProblemUserHomeAnomalies() {
+        return analyzeCurrentHomeAnomalies();
+    }
+
+    @Step("Analisar anomalias da Home para performance_glitch_user")
+    public HomeAnomalyResult analyzePerformanceGlitchUserHomeAnomalies() {
+        return analyzeCurrentHomeAnomalies();
+    }
+
+    @Step("Analisar anomalias da Home para error_user")
+    public HomeAnomalyResult analyzeErrorUserHomeAnomalies() {
+        return analyzeCurrentHomeAnomalies();
+    }
+
+    @Step("Analisar anomalias da Home e lentidão para performance_glitch_user")
+    public PerformanceGlitchHomeAnomalyResult analyzePerformanceGlitchUserIssues(long loginDurationMs) {
+        HomeAnomalyResult homeAnomalyResult = analyzePerformanceGlitchUserHomeAnomalies();
+        return new PerformanceGlitchHomeAnomalyResult(
+                homeAnomalyResult,
+                loginDurationMs,
+                PERFORMANCE_GLITCH_DELAY_THRESHOLD_MS);
     }
 
     // Retorna quantidade de itens no badge do carrinho.

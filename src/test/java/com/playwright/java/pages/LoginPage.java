@@ -177,6 +177,15 @@ public class LoginPage {
         loginWithPerformanceGlitchUser(testData.password());
     }
 
+    @Step("Login com performance_glitch_user medindo duração")
+    public long loginWithPerformanceGlitchUserAndMeasureDurationMs() {
+        long start = System.nanoTime();
+        loginWithPerformanceGlitchUser();
+        page.waitForURL("**/inventory.html");
+        long end = System.nanoTime();
+        return (end - start) / 1_000_000;
+    }
+
     @Step("Login com usuário padrão (dados do JSON)")
     public void loginWithStandardUser() {
         login(testData.user("standard"), testData.password());
