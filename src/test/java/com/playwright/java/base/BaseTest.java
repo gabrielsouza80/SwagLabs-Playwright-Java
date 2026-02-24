@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import com.playwright.java.config.TestConfig;
+import com.playwright.java.pages.ComponentsPage;
 import com.playwright.java.pages.HomePage;
 import com.playwright.java.pages.InventoryPage;
 import com.playwright.java.pages.LoginPage;
@@ -47,6 +48,7 @@ public abstract class BaseTest {
     protected LoginPage loginPage;
     protected InventoryPage inventoryPage;
     protected HomePage homePage;
+    protected ComponentsPage componentsPage;
 
     protected boolean requiresAuthenticatedSession() {
         return true;
@@ -114,6 +116,7 @@ public abstract class BaseTest {
         loginPage = new LoginPage(page);
         inventoryPage = new InventoryPage(page);
         homePage = new HomePage(page);
+        componentsPage = new ComponentsPage(page);
 
         if (requiresAuthenticatedSession()) {
             String inventoryUrl = config.baseUrl().endsWith("/")
