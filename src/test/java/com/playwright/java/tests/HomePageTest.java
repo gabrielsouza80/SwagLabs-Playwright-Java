@@ -1,5 +1,6 @@
 package com.playwright.java.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.qameta.allure.Allure;
@@ -24,6 +25,8 @@ import com.playwright.java.pages.HomePage;
 @Owner("Gabriel Souza")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class HomePageTest extends BaseTest {
+    private static final String BACKPACK_PRODUCT_NAME = "Sauce Labs Backpack";
+    private static final String BACKPACK_PRODUCT_PRICE = "$29.99";
 
     // Valida carregamento da home e elementos básicos.
     @Test
@@ -229,6 +232,130 @@ public class HomePageTest extends BaseTest {
 
         Allure.step("Então o badge do carrinho deve exibir 0 item", () ->
             assertTrue(homePage.hasCartBadgeCount(0)));
+    }
+
+    @Test
+    @Tag("home")
+    @Tag("product-details")
+    @Tag("tc20")
+    @DisplayName("TC20 - Deve abrir página de detalhes ao clicar em um produto")
+    @Story("Product Details In Home")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida que clicar em um produto leva à página de detalhes com informações corretas.")
+    void shouldOpenProductDetailsPageFromHome() {
+        Allure.step("Dado que o usuário está na Home", () ->
+            assertTrue(homePage.isLoaded()));
+
+        Allure.step("Quando clicar no produto Backpack", () ->
+            homePage.clickProductByName(BACKPACK_PRODUCT_NAME));
+
+        Allure.step("Então a página de detalhes deve carregar", () -> {
+            assertTrue(homePage.isProductDetailsLoaded());
+            assertEquals(BACKPACK_PRODUCT_NAME, homePage.getProductDetailsName());
+            assertTrue(homePage.getProductDetailsPrice().contains("29.99"));
+        });
+    }
+
+    @Test
+    @Tag("home")
+    @Tag("product-details")
+    @Tag("tc21")
+    @DisplayName("TC21 - Deve exibir informações corretas do produto nos detalhes")
+    @Story("Product Details In Home")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida que nome, descrição e preço são exibidos corretamente nos detalhes do produto.")
+    void shouldDisplayProductDetailsCorrectlyFromHome() {
+        Allure.step("Dado que o usuário está na Home", () ->
+            assertTrue(homePage.isLoaded()));
+
+        Allure.step("Quando clicar no produto Backpack", () ->
+            homePage.clickProductByName(BACKPACK_PRODUCT_NAME));
+
+        Allure.step("Então deve exibir informações completas do produto", () -> {
+            assertTrue(homePage.isProductDetailsLoaded());
+            assertEquals(BACKPACK_PRODUCT_NAME, homePage.getProductDetailsName());
+            assertTrue(homePage.getProductDetailsDescription().contains("carry.allTheThings()"));
+            assertEquals(BACKPACK_PRODUCT_PRICE, homePage.getProductDetailsPrice());
+            assertTrue(homePage.isAddToCartButtonVisibleOnDetails());
+        });
+    }
+
+    @Test
+    @Tag("home")
+    @Tag("product-details")
+    @Tag("tc22")
+    @DisplayName("TC22 - Deve adicionar produto ao carrinho a partir de detalhes")
+    @Story("Product Details In Home")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida que é possível adicionar um produto ao carrinho a partir da página de detalhes.")
+    void shouldAddProductToCartFromDetailsInHome() {
+        Allure.step("Dado que o usuário está na Home", () ->
+            assertTrue(homePage.isLoaded()));
+
+        Allure.step("Quando abrir detalhes do Backpack e adicionar ao carrinho", () -> {
+            homePage.clickProductByName(BACKPACK_PRODUCT_NAME);
+            assertTrue(homePage.isProductDetailsLoaded());
+            homePage.addToCartFromProductDetails();
+            homePage.backToProductsFromDetails();
+        });
+
+        Allure.step("Então o badge do carrinho deve exibir 1 item", () -> {
+            assertTrue(homePage.isLoaded());
+            assertEquals(1, homePage.getCartBadgeCount());
+        });
+    }
+
+    @Test
+    @Tag("home")
+    @Tag("product-details")
+    @Tag("tc23")
+    @DisplayName("TC23 - Deve voltar para lista ao clicar em Back to products")
+    @Story("Product Details In Home")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida que o botão Back to products retorna corretamente à home.")
+    void shouldNavigateBackToProductsListFromDetailsInHome() {
+        Allure.step("Dado que o usuário está na página de detalhes", () -> {
+            assertTrue(homePage.isLoaded());
+            homePage.clickProductByName(BACKPACK_PRODUCT_NAME);
+            assertTrue(homePage.isProductDetailsLoaded());
+            assertTrue(homePage.isBackButtonVisibleOnDetails());
+        });
+
+        Allure.step("Quando clicar em Back to products", () ->
+            homePage.backToProductsFromDetails());
+
+        Allure.step("Então deve retornar para a Home", () -> {
+            assertTrue(homePage.isLoaded());
+            assertEquals(6, homePage.getInventoryItemCount());
+        });
+    }
+
+    @Test
+    @Tag("home")
+    @Tag("product-details")
+    @Tag("tc24")
+    @DisplayName("TC24 - Deve manter estado do carrinho ao navegar para detalhes e voltar")
+    @Story("Product Details In Home")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida que a quantidade do carrinho é mantida ao abrir e fechar detalhes.")
+    void shouldMaintainCartStateWhenNavigatingDetailsInHome() {
+        Allure.step("Dado que o usuário está na Home com Backpack no carrinho", () -> {
+            assertTrue(homePage.isLoaded());
+            homePage.addBackpackToCart();
+            assertTrue(homePage.isBackpackAddedToCart());
+        });
+
+        Allure.step("Quando abrir detalhes do produto e voltar", () -> {
+            homePage.clickProductByName(BACKPACK_PRODUCT_NAME);
+            assertTrue(homePage.isProductDetailsLoaded());
+            homePage.backToProductsFromDetails();
+        });
+
+        Allure.step("Então o carrinho deve manter o item", () -> {
+            assertTrue(homePage.isLoaded());
+            assertEquals(1, homePage.getCartBadgeCount());
+            assertTrue(homePage.isBackpackAddedToCart());
+        });
     }
 
     @Test

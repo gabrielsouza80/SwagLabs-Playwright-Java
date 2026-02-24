@@ -28,7 +28,10 @@ public class HomePage {
     private static final String RESET_SIDEBAR_LINK = "[data-test='reset-sidebar-link']";
     private static final String FOOTER = "[data-test='footer']";
     private static final String PRODUCT_NAME = "[data-test='inventory-item-name']";
+    private static final String PRODUCT_DESC = "[data-test='inventory-item-desc']";
     private static final String PRODUCT_PRICE = "[data-test='inventory-item-price']";
+    private static final String BACK_TO_PRODUCTS_BUTTON = "[data-test='back-to-products']";
+    private static final String ADD_TO_CART_DETAILS_BUTTON = "[data-test='add-to-cart']";
     private static final String ADD_BACKPACK_BUTTON = "[data-test='add-to-cart-sauce-labs-backpack']";
     private static final String REMOVE_BACKPACK_BUTTON = "[data-test='remove-sauce-labs-backpack']";
 
@@ -224,6 +227,52 @@ public class HomePage {
     @Step("Clicar no produto com ID: {itemDataTest}")
     public void clickProductByDataTest(String itemDataTest) {
         page.locator("[data-test='" + itemDataTest + "-img-link']").click();
+    }
+
+    @Step("Validar carregamento da página de detalhes do produto")
+    public boolean isProductDetailsLoaded() {
+        return page.url().contains("/inventory-item.html")
+                && page.locator(PRODUCT_NAME).isVisible()
+                && page.locator(PRODUCT_DESC).isVisible()
+                && page.locator(PRODUCT_PRICE).isVisible();
+    }
+
+    @Step("Obter nome do produto nos detalhes")
+    public String getProductDetailsName() {
+        return page.locator(PRODUCT_NAME).innerText().trim();
+    }
+
+    @Step("Obter descrição do produto nos detalhes")
+    public String getProductDetailsDescription() {
+        return page.locator(PRODUCT_DESC).innerText().trim();
+    }
+
+    @Step("Obter preço do produto nos detalhes")
+    public String getProductDetailsPrice() {
+        return page.locator(PRODUCT_PRICE).innerText().trim();
+    }
+
+    @Step("Adicionar ao carrinho a partir de detalhes")
+    public void addToCartFromProductDetails() {
+        if (page.locator(ADD_TO_CART_DETAILS_BUTTON).count() > 0) {
+            page.locator(ADD_TO_CART_DETAILS_BUTTON).click();
+            return;
+        }
+        page.locator("button[data-test^='add-to-cart']").first().click();
+    }
+
+    public boolean isAddToCartButtonVisibleOnDetails() {
+        return page.locator(ADD_TO_CART_DETAILS_BUTTON).count() > 0
+                || page.locator("button[data-test^='add-to-cart']").count() > 0;
+    }
+
+    @Step("Voltar dos detalhes para a listagem")
+    public void backToProductsFromDetails() {
+        page.locator(BACK_TO_PRODUCTS_BUTTON).click();
+    }
+
+    public boolean isBackButtonVisibleOnDetails() {
+        return page.locator(BACK_TO_PRODUCTS_BUTTON).isVisible();
     }
 
     // Captura os nomes de todos os produtos visíveis.

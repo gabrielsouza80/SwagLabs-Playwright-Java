@@ -1,5 +1,6 @@
 package com.playwright.java.tests;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.playwright.java.base.BaseTest;
@@ -22,6 +23,76 @@ import org.junit.jupiter.api.TestMethodOrder;
 @Owner("Gabriel Souza")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class ComponentsTest extends BaseTest {
+
+    @Test
+    @Tag("components")
+    @Tag("header")
+    @Tag("tc29")
+    @DisplayName("TC29 - Deve exibir componentes globais do header")
+    @Story("Header")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida presença dos componentes globais do header: primary header, botão de menu e ícone do carrinho.")
+    void shouldDisplayGlobalHeaderComponents() {
+        Allure.step("Dado que o usuário está na Home autenticado", () ->
+                assertTrue(homePage.isLoaded()));
+
+        Allure.step("Então o header principal deve estar visível", () ->
+                assertTrue(componentsPage.isPrimaryHeaderVisible()));
+
+        Allure.step("E os componentes de menu e carrinho devem estar visíveis", () -> {
+            assertTrue(componentsPage.isMenuButtonVisible());
+            assertTrue(componentsPage.isCartIconVisible());
+        });
+    }
+
+    @Test
+    @Tag("components")
+    @Tag("menu")
+    @Tag("tc30")
+    @DisplayName("TC30 - Deve abrir menu lateral e exibir opções esperadas")
+    @Story("Menu")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Valida abertura do menu lateral e presença das opções All Items, About, Logout e Reset App State.")
+    void shouldOpenMenuAndDisplayExpectedOptions() {
+        Allure.step("Dado que o usuário está na Home autenticado", () ->
+                assertTrue(homePage.isLoaded()));
+
+        Allure.step("Quando abrir o menu lateral", () ->
+                componentsPage.openMenu());
+
+        Allure.step("Então o menu deve estar aberto com opções esperadas", () ->
+                assertTrue(componentsPage.hasExpectedMenuOptionsVisible()));
+
+        Allure.step("E a opção About deve apontar para o site da Sauce Labs", () -> {
+            String aboutHref = componentsPage.getAboutMenuHref();
+            assertNotNull(aboutHref);
+            assertTrue(aboutHref.contains("saucelabs.com"));
+        });
+    }
+
+    @Test
+    @Tag("components")
+    @Tag("menu")
+    @Tag("tc31")
+    @DisplayName("TC31 - Deve fechar menu lateral no botão Close Menu")
+    @Story("Menu")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Valida fechamento do menu lateral pelo botão Close Menu e ocultação das opções.")
+    void shouldCloseMenuUsingCloseButton() {
+        Allure.step("Dado que o usuário está na Home autenticado", () ->
+                assertTrue(homePage.isLoaded()));
+
+        Allure.step("E que o menu lateral foi aberto", () -> {
+            componentsPage.openMenu();
+            assertTrue(componentsPage.isMenuOpen());
+        });
+
+        Allure.step("Quando fechar o menu no botão Close Menu", () ->
+                componentsPage.closeMenu());
+
+        Allure.step("Então as opções do menu devem ficar ocultas", () ->
+                assertTrue(componentsPage.hasMenuOptionsHidden()));
+    }
 
     @Test
     @Tag("components")
@@ -98,4 +169,26 @@ public class ComponentsTest extends BaseTest {
         Allure.step("Então deve retornar para a tela de login", () ->
                 assertTrue(loginPage.isLoaded()));
     }
+
+        @Test
+        @Tag("components")
+        @Tag("menu")
+        @Tag("tc32")
+        @DisplayName("TC32 - Deve voltar para inventário usando All Items")
+        @Story("Menu")
+        @Severity(SeverityLevel.NORMAL)
+        @Description("Valida navegação para o inventário a partir da opção All Items no menu lateral.")
+        void shouldNavigateToInventoryByAllItemsOption() {
+                Allure.step("Dado que o usuário abriu a página de carrinho", () -> {
+                        assertTrue(homePage.isLoaded());
+                        componentsPage.openCart();
+                        assertTrue(componentsPage.isCartPageLoaded());
+                });
+
+                Allure.step("Quando selecionar All Items no menu lateral", () ->
+                                componentsPage.openAllItemsFromMenu());
+
+                Allure.step("Então deve retornar para a Home de inventário", () ->
+                                assertTrue(homePage.isLoaded()));
+        }
 }

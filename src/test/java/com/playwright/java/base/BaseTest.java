@@ -28,7 +28,6 @@ import com.playwright.java.config.TestConfig;
 import com.playwright.java.pages.ComponentsPage;
 import com.playwright.java.pages.HomePage;
 import com.playwright.java.pages.LoginPage;
-import com.playwright.java.pages.ProductDetailsPage;
 
 // Classe base de todos os testes.
 // Tudo que é comum (abrir browser, login, fechar browser) fica aqui.
@@ -48,7 +47,6 @@ public abstract class BaseTest {
     protected LoginPage loginPage;
     protected HomePage homePage;
     protected ComponentsPage componentsPage;
-    protected ProductDetailsPage productDetailsPage;
 
     protected boolean requiresAuthenticatedSession() {
         return true;
@@ -116,7 +114,6 @@ public abstract class BaseTest {
         loginPage = new LoginPage(page);
         homePage = new HomePage(page);
         componentsPage = new ComponentsPage(page);
-        productDetailsPage = new ProductDetailsPage(page);
 
         if (requiresAuthenticatedSession()) {
             String inventoryUrl = config.baseUrl().endsWith("/")
