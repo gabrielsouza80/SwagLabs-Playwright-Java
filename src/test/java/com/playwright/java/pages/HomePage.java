@@ -10,10 +10,9 @@ import java.util.stream.Collectors;
 // Page Object da Home/Inventory.
 // Reúne ações e validações funcionais da página principal após login.
 public class HomePage {
-    private static final long PERFORMANCE_GLITCH_DELAY_THRESHOLD_MS = 1500;
-
     private final Page page;
     private final TestData testData;
+    private final long performanceGlitchDelayThresholdMs;
 
     // Seletores dos elementos importantes da home.
     private static final String TITLE = "[data-test='title']";
@@ -149,6 +148,7 @@ public class HomePage {
     public HomePage(Page page) {
         this.page = page;
         this.testData = TestData.get();
+        this.performanceGlitchDelayThresholdMs = testData.expectedInt("performanceGlitchDelayThresholdMs");
     }
 
     // Validação principal de carregamento da home.
@@ -436,7 +436,7 @@ public class HomePage {
         return new PerformanceGlitchHomeAnomalyResult(
                 homeAnomalyResult,
                 loginDurationMs,
-                PERFORMANCE_GLITCH_DELAY_THRESHOLD_MS);
+            performanceGlitchDelayThresholdMs);
     }
 
     // Retorna quantidade de itens no badge do carrinho.

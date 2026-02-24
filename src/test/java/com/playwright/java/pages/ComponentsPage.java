@@ -122,7 +122,7 @@ public class ComponentsPage {
 
     public boolean hasValidAboutMenuLink() {
         String aboutHref = getAboutMenuHref();
-        return aboutHref != null && aboutHref.contains("saucelabs.com");
+        return aboutHref != null && aboutHref.contains(testData.expected("aboutUrlContains"));
     }
 
     @Step("Adicionar Backpack e validar inclusão no carrinho")
@@ -150,7 +150,7 @@ public class ComponentsPage {
             Allure.addAttachment(
                     "Known Defect Observed",
                     "text/plain",
-                    "Reset App State zerou o badge, mas o botão Backpack não voltou para Add to cart.",
+                    testData.expected("knownIssueResetObservedMessage"),
                     ".txt");
         }
         return true;

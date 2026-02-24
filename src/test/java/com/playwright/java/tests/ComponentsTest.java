@@ -3,6 +3,7 @@ package com.playwright.java.tests;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.playwright.java.base.BaseTest;
+import com.playwright.java.config.TestData;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 @Owner("Gabriel Souza")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class ComponentsTest extends BaseTest {
+        private final TestData testData = TestData.get();
 
     @Test
     @Tag("components")
@@ -108,11 +110,11 @@ public class ComponentsTest extends BaseTest {
     @Severity(SeverityLevel.CRITICAL)
         @Description("Valida reset de estado do menu global, incluindo badge e estado visual do botão do item. Defeito conhecido: após reset, o botão pode permanecer como Remove.")
     void shouldResetAppStateAndRestoreBackpackButtonState() {
-                Allure.label("knownIssue", "SAUCEDEMO-RESET-BACKPACK-BUTTON");
+                Allure.label("knownIssue", testData.expected("knownIssueResetCode"));
                 Allure.addAttachment(
                                 "Known Defect",
                                 "text/plain",
-                                "Known issue: após Reset App State, o badge zera mas o botão do Backpack pode permanecer como Remove em vez de voltar para Add to cart.",
+                                testData.expected("knownIssueResetMessage"),
                                 ".txt");
 
         Allure.step("Dado que o usuário está na Home autenticado", () ->
@@ -123,13 +125,13 @@ public class ComponentsTest extends BaseTest {
         });
 
         Allure.step("E o badge deve exibir 1 item", () ->
-                assertTrue(componentsPage.hasCartBadgeCount(1)));
+                assertTrue(componentsPage.hasCartBadgeCount(testData.expectedInt("cartBadgeOne"))));
 
         Allure.step("Quando executar Reset App State no menu global", () ->
                 componentsPage.resetAppState());
 
         Allure.step("Então o badge deve voltar para 0", () ->
-                assertTrue(componentsPage.hasCartBadgeCount(0)));
+                assertTrue(componentsPage.hasCartBadgeCount(testData.expectedInt("cartBadgeZero"))));
 
         Allure.step("E analisar estado do botão Backpack após reset (bug conhecido)", () ->
                 assertTrue(componentsPage.validateBackpackStateAfterResetKnownBug()));

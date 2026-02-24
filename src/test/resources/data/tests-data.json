@@ -11,7 +11,18 @@
       "homeTitle": "Products",
       "cartTitle": "Your Cart",
       "defaultSortLabel": "Name (A to Z)",
-      "inventoryItemCount": 6
+      "inventoryItemCount": 6,
+      "backpackProductName": "Sauce Labs Backpack",
+      "backpackProductPrice": "$29.99",
+      "backpackPriceContains": "29.99",
+      "backpackDescriptionContains": "carry.allTheThings()",
+      "cartBadgeOne": 1,
+      "cartBadgeZero": 0,
+      "aboutUrlContains": "saucelabs.com",
+      "performanceGlitchDelayThresholdMs": 1500,
+      "knownIssueResetCode": "SAUCEDEMO-RESET-BACKPACK-BUTTON",
+      "knownIssueResetMessage": "Known issue: após Reset App State, o badge zera mas o botão do Backpack pode permanecer como Remove em vez de voltar para Add to cart.",
+      "knownIssueResetObservedMessage": "Reset App State zerou o badge, mas o botão Backpack não voltou para Add to cart."
     },
     "users": {
       "standard": "standard_user",
@@ -83,57 +94,87 @@
       "TC07": {
         "scenario": "login com performance_glitch_user",
         "usernameRef": "performanceGlitch"
+      },
+      "TC08": {
+        "scenario": "login com problem_user",
+        "usernameRef": "problem"
+      },
+      "TC09": {
+        "scenario": "login com error_user",
+        "usernameRef": "error"
+      },
+      "TC10": {
+        "scenario": "login com visual_user",
+        "usernameRef": "visual"
       }
     },
     "HomePageTest": {
-      "TC08": {
+      "TC11": {
         "scenario": "elementos principais visíveis"
       },
-      "TC09": {
+      "TC12": {
         "scenario": "título da home",
         "expectedTitleRef": "homeTitle"
       },
-      "TC10": {
+      "TC13": {
         "scenario": "ordenação padrão",
         "expectedSortRef": "defaultSortLabel"
       },
-      "TC11": {
+      "TC14": {
         "scenario": "quantidade de itens",
         "expectedCountRef": "inventoryItemCount"
       },
-      "TC12": {
+      "TC15": {
         "scenario": "ordenação nome crescente",
         "sortOptionRef": "nameAsc"
       },
-      "TC13": {
+      "TC16": {
         "scenario": "ordenação nome decrescente",
         "sortOptionRef": "nameDesc"
       },
-      "TC14": {
+      "TC17": {
         "scenario": "ordenação preço crescente",
         "sortOptionRef": "priceAsc"
       },
-      "TC15": {
+      "TC18": {
         "scenario": "ordenação preço decrescente",
         "sortOptionRef": "priceDesc"
       },
-      "TC16": {
+      "TC19": {
         "scenario": "adicionar backpack no carrinho",
         "expectedCartBadge": 1
       },
-      "TC17": {
+      "TC20": {
         "scenario": "remover backpack do carrinho",
         "expectedCartBadge": 0
       },
-      "TC18": {
-        "scenario": "abrir carrinho"
+      "TC21": {
+        "scenario": "abrir página de detalhes ao clicar em um produto",
+        "productNameRef": "backpackProductName",
+        "expectedPriceContainsRef": "backpackPriceContains"
       },
-      "TC19": {
-        "scenario": "reset app state",
-        "badgeBeforeReset": 1,
-        "badgeAfterReset": 0
+      "TC22": {
+        "scenario": "exibir informações corretas do produto nos detalhes",
+        "productNameRef": "backpackProductName",
+        "expectedPriceRef": "backpackProductPrice",
+        "expectedDescriptionContainsRef": "backpackDescriptionContains"
+      },
+      "TC23": {
+        "scenario": "adicionar produto ao carrinho a partir de detalhes",
+        "productNameRef": "backpackProductName",
+        "expectedCartBadgeAfterAddRef": "cartBadgeOne"
+      },
+      "TC24": {
+        "scenario": "voltar para lista ao clicar em Back to products",
+        "productNameRef": "backpackProductName",
+        "expectedInventoryCountAfterBackRef": "inventoryItemCount"
       },
       "TC25": {
+        "scenario": "manter estado do carrinho ao navegar para detalhes e voltar",
+        "productNameRef": "backpackProductName",
+        "expectedCartBadgeAfterNavigationRef": "cartBadgeOne"
+      },
+      "TC26": {
         "scenario": "acesso home com problem_user - anomalias",
         "usernameRef": "problem",
         "expectedAnomalies": [
@@ -141,22 +182,22 @@
           "startedWithRemove"
         ]
       },
-      "TC26": {
+      "TC27": {
         "scenario": "acesso home com performance_glitch_user - delay e anomalias",
         "usernameRef": "performanceGlitch",
-        "minExpectedDelayMs": 3000,
+        "minExpectedDelayMsRef": "performanceGlitchDelayThresholdMs",
         "expectedAnomalies": [
           "slowedDownLoad"
         ]
       },
-      "TC27": {
+      "TC28": {
         "scenario": "acesso home com error_user - anomalias",
         "usernameRef": "error",
         "expectedAnomalies": [
           "buttonStateInconsistency"
         ]
       },
-      "TC28": {
+      "TC29": {
         "scenario": "acesso home com visual_user - anomalias visuais",
         "usernameRef": "visual",
         "expectedAnomalies": [
@@ -165,33 +206,33 @@
         ]
       }
     },
-    "ProductDetailsTest": {
-      "TC20": {
-        "scenario": "abrir página de detalhes ao clicar em um produto",
-        "productName": "Sauce Labs Backpack",
-        "expectedPrice": "$29.99"
+    "ComponentsTest": {
+      "TC30": {
+        "scenario": "exibir componentes globais do header"
       },
-      "TC21": {
-        "scenario": "exibir informações corretas do produto",
-        "productName": "Sauce Labs Backpack",
-        "expectedPrice": "$29.99",
-        "expectedDescriptionContains": "carry.allTheThings()"
+      "TC31": {
+        "scenario": "abrir menu lateral e exibir opções esperadas",
+        "aboutUrlContainsRef": "aboutUrlContains"
       },
-      "TC22": {
-        "scenario": "adicionar produto ao carrinho a partir de detalhes",
-        "productName": "Sauce Labs Backpack",
-        "expectedCartBadgeAfterAdd": 1
+      "TC32": {
+        "scenario": "fechar menu lateral no botão Close Menu"
       },
-      "TC23": {
-        "scenario": "voltar para lista ao clicar em Back to products",
-        "productName": "Sauce Labs Backpack",
-        "expectedInventoryCountAfterBack": 6
+      "TC33": {
+        "scenario": "abrir página de carrinho"
       },
-      "TC24": {
-        "scenario": "manter estado do carrinho ao navegar para detalhes e voltar",
-        "productName": "Sauce Labs Backpack",
-        "expectedCartBadgeBeforeNavigation": 1,
-        "expectedCartBadgeAfterNavigation": 1
+      "TC34": {
+        "scenario": "resetar estado e voltar botão Backpack para Add to cart",
+        "knownIssueCodeRef": "knownIssueResetCode",
+        "knownIssueMessageRef": "knownIssueResetMessage",
+        "knownIssueObservedMessageRef": "knownIssueResetObservedMessage",
+        "expectedBadgeBeforeResetRef": "cartBadgeOne",
+        "expectedBadgeAfterResetRef": "cartBadgeZero"
+      },
+      "TC35": {
+        "scenario": "fazer logout pelo menu global"
+      },
+      "TC36": {
+        "scenario": "voltar para inventário usando All Items"
       }
     }
   }

@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import com.playwright.java.base.BaseTest;
+import com.playwright.java.config.TestData;
 import com.playwright.java.pages.HomePage;
 
 // Suíte de testes da HomePage com foco em funcionalidades principais.
@@ -25,8 +26,7 @@ import com.playwright.java.pages.HomePage;
 @Owner("Gabriel Souza")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class HomePageTest extends BaseTest {
-    private static final String BACKPACK_PRODUCT_NAME = "Sauce Labs Backpack";
-    private static final String BACKPACK_PRODUCT_PRICE = "$29.99";
+    private final TestData testData = TestData.get();
 
     // Valida carregamento da home e elementos básicos.
     @Test
@@ -208,7 +208,7 @@ public class HomePageTest extends BaseTest {
             assertTrue(homePage.isBackpackAddedToCart()));
 
         Allure.step("E o badge do carrinho deve exibir 1 item", () ->
-            assertTrue(homePage.hasCartBadgeCount(1)));
+            assertTrue(homePage.hasCartBadgeCount(testData.expectedInt("cartBadgeOne"))));
     }
 
     // Remove item do carrinho e valida contador zerado.
@@ -231,7 +231,7 @@ public class HomePageTest extends BaseTest {
             homePage.removeBackpackFromCart());
 
         Allure.step("Então o badge do carrinho deve exibir 0 item", () ->
-            assertTrue(homePage.hasCartBadgeCount(0)));
+            assertTrue(homePage.hasCartBadgeCount(testData.expectedInt("cartBadgeZero"))));
     }
 
     @Test
@@ -247,12 +247,12 @@ public class HomePageTest extends BaseTest {
             assertTrue(homePage.isLoaded()));
 
         Allure.step("Quando clicar no produto Backpack", () ->
-            homePage.clickProductByName(BACKPACK_PRODUCT_NAME));
+            homePage.clickProductByName(testData.expected("backpackProductName")));
 
         Allure.step("Então a página de detalhes deve carregar", () -> {
             assertTrue(homePage.isProductDetailsLoaded());
-            assertEquals(BACKPACK_PRODUCT_NAME, homePage.getProductDetailsName());
-            assertTrue(homePage.getProductDetailsPrice().contains("29.99"));
+            assertEquals(testData.expected("backpackProductName"), homePage.getProductDetailsName());
+            assertTrue(homePage.getProductDetailsPrice().contains(testData.expected("backpackPriceContains")));
         });
     }
 
@@ -269,13 +269,13 @@ public class HomePageTest extends BaseTest {
             assertTrue(homePage.isLoaded()));
 
         Allure.step("Quando clicar no produto Backpack", () ->
-            homePage.clickProductByName(BACKPACK_PRODUCT_NAME));
+            homePage.clickProductByName(testData.expected("backpackProductName")));
 
         Allure.step("Então deve exibir informações completas do produto", () -> {
             assertTrue(homePage.isProductDetailsLoaded());
-            assertEquals(BACKPACK_PRODUCT_NAME, homePage.getProductDetailsName());
-            assertTrue(homePage.getProductDetailsDescription().contains("carry.allTheThings()"));
-            assertEquals(BACKPACK_PRODUCT_PRICE, homePage.getProductDetailsPrice());
+            assertEquals(testData.expected("backpackProductName"), homePage.getProductDetailsName());
+            assertTrue(homePage.getProductDetailsDescription().contains(testData.expected("backpackDescriptionContains")));
+            assertEquals(testData.expected("backpackProductPrice"), homePage.getProductDetailsPrice());
             assertTrue(homePage.isAddToCartButtonVisibleOnDetails());
         });
     }
@@ -293,7 +293,7 @@ public class HomePageTest extends BaseTest {
             assertTrue(homePage.isLoaded()));
 
         Allure.step("Quando abrir detalhes do Backpack e adicionar ao carrinho", () -> {
-            homePage.clickProductByName(BACKPACK_PRODUCT_NAME);
+            homePage.clickProductByName(testData.expected("backpackProductName"));
             assertTrue(homePage.isProductDetailsLoaded());
             homePage.addToCartFromProductDetails();
             homePage.backToProductsFromDetails();
@@ -301,7 +301,7 @@ public class HomePageTest extends BaseTest {
 
         Allure.step("Então o badge do carrinho deve exibir 1 item", () -> {
             assertTrue(homePage.isLoaded());
-            assertEquals(1, homePage.getCartBadgeCount());
+            assertEquals(testData.expectedInt("cartBadgeOne"), homePage.getCartBadgeCount());
         });
     }
 
@@ -316,7 +316,7 @@ public class HomePageTest extends BaseTest {
     void shouldNavigateBackToProductsListFromDetailsInHome() {
         Allure.step("Dado que o usuário está na página de detalhes", () -> {
             assertTrue(homePage.isLoaded());
-            homePage.clickProductByName(BACKPACK_PRODUCT_NAME);
+            homePage.clickProductByName(testData.expected("backpackProductName"));
             assertTrue(homePage.isProductDetailsLoaded());
             assertTrue(homePage.isBackButtonVisibleOnDetails());
         });
@@ -326,7 +326,7 @@ public class HomePageTest extends BaseTest {
 
         Allure.step("Então deve retornar para a Home", () -> {
             assertTrue(homePage.isLoaded());
-            assertEquals(6, homePage.getInventoryItemCount());
+            assertEquals(testData.expectedInt("inventoryItemCount"), homePage.getInventoryItemCount());
         });
     }
 
@@ -346,14 +346,14 @@ public class HomePageTest extends BaseTest {
         });
 
         Allure.step("Quando abrir detalhes do produto e voltar", () -> {
-            homePage.clickProductByName(BACKPACK_PRODUCT_NAME);
+            homePage.clickProductByName(testData.expected("backpackProductName"));
             assertTrue(homePage.isProductDetailsLoaded());
             homePage.backToProductsFromDetails();
         });
 
         Allure.step("Então o carrinho deve manter o item", () -> {
             assertTrue(homePage.isLoaded());
-            assertEquals(1, homePage.getCartBadgeCount());
+            assertEquals(testData.expectedInt("cartBadgeOne"), homePage.getCartBadgeCount());
             assertTrue(homePage.isBackpackAddedToCart());
         });
     }
