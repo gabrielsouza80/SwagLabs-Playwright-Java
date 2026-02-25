@@ -23,91 +23,91 @@ import org.junit.jupiter.api.TestMethodOrder;
 @Owner("Gabriel Souza")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class ComponentsTest extends BaseTest {
-        private final TestData testData = TestData.get();
+    private final TestData testData = TestData.get();
 
     @Test
     @Tag("components")
     @Tag("cart")
-        @Tag("tc30")
-        @DisplayName("TC30 - Deve abrir página de carrinho")
+    @Tag("tc30")
+    @DisplayName("TC30 - Should open cart page")
     @Story("Cart")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Navega para a página de carrinho usando componente global do header.")
+    @Description("Navigates to cart page using the global header component.")
     void shouldOpenCartPageFromHeaderComponent() {
-        Allure.step("Dado que o usuário está na Home autenticado", () ->
+        Allure.step("Given the user is authenticated on the homepage", () ->
                 assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando clicar no ícone global do carrinho", () ->
+        Allure.step("When clicking the global cart icon", () ->
                 componentsPage.openCart());
 
-        Allure.step("Então a página de carrinho deve ser exibida", () ->
+        Allure.step("Then the cart page should be displayed", () ->
                 assertTrue(componentsPage.isCartPageLoaded()));
     }
 
     @Test
     @Tag("components")
     @Tag("menu")
-        @Tag("tc31")
-        @Tag("known-bug")
-        @DisplayName("TC31 - Deve resetar estado e voltar botão Backpack para Add to cart")
+    @Tag("tc31")
+    @Tag("known-bug")
+    @DisplayName("TC31 - Should reset state and restore Backpack button to Add to cart")
     @Story("Menu")
     @Severity(SeverityLevel.CRITICAL)
-        @Description("Valida reset de estado do menu global, incluindo badge e estado visual do botão do item. Defeito conhecido: após reset, o botão pode permanecer como Remove.")
+    @Description("Validates global menu reset state, including badge and Backpack button state. Known defect: after reset, button may remain as Remove.")
     void shouldResetAppStateAndRestoreBackpackButtonState() {
-                Allure.label("knownIssue", testData.knownIssue("resetBackpackButton"));
-                Allure.addAttachment(
-                                "Known Defect",
-                                "text/plain",
-                                testData.message("resetKnownDefect"),
-                                ".txt");
+        Allure.label("knownIssue", testData.knownIssue("resetBackpackButton"));
+        Allure.addAttachment(
+                "Known Defect",
+                "text/plain",
+                testData.message("resetKnownDefect"),
+                ".txt");
 
-        Allure.step("Dado que o usuário está na Home autenticado", () ->
+        Allure.step("Given the user is authenticated on the homepage", () ->
                 assertTrue(homePage.isLoaded()));
 
-        Allure.step("E que o produto Backpack foi adicionado", () -> {
+        Allure.step("And Backpack product was added", () -> {
             componentsPage.addBackpackToCart();
             assertTrue(componentsPage.isBackpackAddedToCart());
         });
 
-        Allure.step("E o badge deve exibir 1 item", () ->
+        Allure.step("And badge should display 1 item", () ->
                 assertTrue(componentsPage.hasCartBadgeCount(
                         testData.testValueInt("ComponentsTest", "TC31", "badgeBeforeReset"))));
 
-        Allure.step("Quando executar Reset App State no menu global", () ->
+        Allure.step("When executing Reset App State from global menu", () ->
                 componentsPage.resetAppState());
 
-        Allure.step("Então o badge deve voltar para 0", () ->
+        Allure.step("Then badge should return to 0", () ->
                 assertTrue(componentsPage.hasCartBadgeCount(
                         testData.testValueInt("ComponentsTest", "TC31", "badgeAfterReset"))));
 
-        Allure.step("E analisar estado do botão Backpack após reset (bug conhecido)", () -> {
-                if (!componentsPage.isBackpackReadyToAdd()) {
-                        Allure.addAttachment(
-                                "Known Defect Observed",
-                                "text/plain",
-                                testData.message("resetKnownDefect"),
-                                ".txt");
-                }
-                assertTrue(true);
+        Allure.step("And analyze Backpack button state after reset (known bug)", () -> {
+            if (!componentsPage.isBackpackReadyToAdd()) {
+                Allure.addAttachment(
+                        "Known Defect Observed",
+                        "text/plain",
+                        testData.message("resetKnownDefect"),
+                        ".txt");
+            }
+            assertTrue(true);
         });
     }
 
     @Test
     @Tag("components")
     @Tag("menu")
-        @Tag("tc32")
-        @DisplayName("TC32 - Deve fazer logout pelo menu global")
+    @Tag("tc32")
+    @DisplayName("TC32 - Should logout from global menu")
     @Story("Menu")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Realiza logout via menu global e valida retorno para tela de login.")
+    @Description("Performs logout through global menu and validates return to login screen.")
     void shouldLogoutFromGlobalMenuComponent() {
-        Allure.step("Dado que o usuário está na Home autenticado", () ->
+        Allure.step("Given the user is authenticated on the homepage", () ->
                 assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando realizar logout pelo menu global", () ->
+        Allure.step("When logging out through global menu", () ->
                 componentsPage.logout());
 
-        Allure.step("Então deve retornar para a tela de login", () ->
+        Allure.step("Then user should return to login screen", () ->
                 assertTrue(loginPage.isLoaded()));
     }
 }

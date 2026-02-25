@@ -4,14 +4,14 @@ import com.microsoft.playwright.Page;
 import com.playwright.java.config.TestData;
 import io.qameta.allure.Step;
 
-// Page Object da tela de login.
-// Aqui ficam somente ações/validações da página de login.
+// Page Object for the login screen.
+// This class contains only login-page actions and validations.
 public class LoginPage {
-    // Referência da aba atual do navegador.
+    // Reference to the current browser tab.
     private final Page page;
     private final TestData testData;
 
-    // Seletores (preferência por data-test para maior estabilidade).
+    // Selectors (prefer data-test for better stability).
     private static final String USERNAME_INPUT = "[data-test='username']";
     private static final String PASSWORD_INPUT = "[data-test='password']";
     private static final String LOGIN_BUTTON = "[data-test='login-button']";
@@ -22,162 +22,162 @@ public class LoginPage {
     private static final String LOGIN_PASSWORD_HINT = "[data-test='login-password']";
     private static final String ERROR_MESSAGE = "[data-test='error']";
 
-    // Recebe a página para executar ações nela.
+    // Receives the page instance used to perform interactions.
     public LoginPage(Page page) {
         this.page = page;
         this.testData = TestData.get();
     }
 
-    // Navega para a URL base da aplicação.
-    @Step("Abrir URL da aplicação: {baseUrl}")
+    // Navigates to the application base URL.
+    @Step("Open application URL: {baseUrl}")
     public void open(String baseUrl) {
         page.navigate(baseUrl);
     }
 
-    // Verifica se a tela de login está visível.
-    @Step("Validar se tela de login está carregada")
+    // Checks whether the login screen is visible.
+    @Step("Validate that the login screen is loaded")
     public boolean isLoaded() {
         return page.locator(LOGIN_CONTAINER).isVisible();
     }
 
-    @Step("Validar botão de login visível")
+    @Step("Validate login button is visible")
     public boolean isLoginButtonVisible() {
         return page.locator(LOGIN_BUTTON).isVisible();
     }
 
-    @Step("Validar campo de usuário visível")
+    @Step("Validate username field is visible")
     public boolean isUsernameInputVisible() {
         return page.locator(USERNAME_INPUT).isVisible();
     }
 
-    @Step("Validar campo de senha visível")
+    @Step("Validate password field is visible")
     public boolean isPasswordInputVisible() {
         return page.locator(PASSWORD_INPUT).isVisible();
     }
 
-    // Preenche usuário/senha e clica em login.
-    @Step("Realizar login com usuário: {username}")
+    // Fills in username/password and clicks login.
+    @Step("Log in with user: {username}")
     public void login(String username, String password) {
         page.locator(USERNAME_INPUT).fill(username);
         page.locator(PASSWORD_INPUT).fill(password);
         page.locator(LOGIN_BUTTON).click();
     }
 
-    @Step("Abrir aplicação e realizar login com usuário: {username}")
+    @Step("Open application and log in with user: {username}")
     public void openAndLogin(String baseUrl, String username, String password) {
         open(baseUrl);
         login(username, password);
     }
 
-    @Step("Preencher usuário: {username}")
+    @Step("Fill username: {username}")
     public void fillUsername(String username) {
         page.locator(USERNAME_INPUT).fill(username);
     }
 
-    @Step("Preencher senha")
+    @Step("Fill password")
     public void fillPassword(String password) {
         page.locator(PASSWORD_INPUT).fill(password);
     }
 
-    @Step("Clicar no botão Login")
+    @Step("Click the Login button")
     public void clickLogin() {
         page.locator(LOGIN_BUTTON).click();
     }
 
-    @Step("Validar logo Swag Labs visível")
+    @Step("Validate Swag Labs logo is visible")
     public boolean isLogoVisible() {
         return page.locator(LOGIN_LOGO).isVisible();
     }
 
-    @Step("Validar painel de credenciais visível")
+    @Step("Validate credentials panel is visible")
     public boolean isCredentialsPanelVisible() {
         return page.locator(LOGIN_CREDENTIALS_CONTAINER).isVisible();
     }
 
-    @Step("Obter texto de usuários aceitos")
+    @Step("Get accepted usernames text")
     public String getAcceptedUsernamesText() {
         return page.locator(LOGIN_CREDENTIALS).innerText();
     }
 
-    @Step("Validar lista completa de usuários aceitos")
+    @Step("Validate all accepted usernames are displayed")
     public boolean hasAllAcceptedUsers() {
         String acceptedUsers = getAcceptedUsernamesText();
         return testData.allUsers().stream().allMatch(acceptedUsers::contains);
     }
 
-    @Step("Obter texto de dica de senha")
+    @Step("Get password hint text")
     public String getPasswordHintText() {
         return page.locator(LOGIN_PASSWORD_HINT).innerText();
     }
 
-    @Step("Validar senha padrão exibida na tela")
+    @Step("Validate default password is shown on screen")
     public boolean hasDefaultPasswordHint() {
         return getPasswordHintText().contains(testData.password());
     }
 
-    @Step("Validar mensagem de erro visível")
+    @Step("Validate error message is visible")
     public boolean isErrorVisible() {
         return page.locator(ERROR_MESSAGE).isVisible();
     }
 
-    @Step("Obter mensagem de erro")
+    @Step("Get error message")
     public String getErrorMessage() {
         return page.locator(ERROR_MESSAGE).innerText().trim();
     }
 
-    @Step("Validar mensagem de erro contém: {expectedText}")
+    @Step("Validate error message contains: {expectedText}")
     public boolean hasErrorMessageContaining(String expectedText) {
         return isErrorVisible() && getErrorMessage().contains(expectedText);
     }
 
-    @Step("Validar que usuário não foi redirecionado para inventário")
+    @Step("Validate user was not redirected to inventory")
     public boolean isOnInventoryPage() {
         return page.url().contains(testData.route("inventory"));
     }
 
-    @Step("Tentar login sem usuário")
+    @Step("Try logging in without username")
     public void tryLoginWithoutUsername(String password) {
         fillPassword(password);
         clickLogin();
     }
 
-    @Step("Tentar login sem usuário (senha do JSON)")
+    @Step("Try logging in without username (password from JSON)")
     public void tryLoginWithoutUsername() {
         tryLoginWithoutUsername(testData.password());
     }
 
-    @Step("Tentar login sem senha")
+    @Step("Try logging in without password")
     public void tryLoginWithoutPassword(String username) {
         fillUsername(username);
         clickLogin();
     }
 
-    @Step("Tentar login sem senha (usuário padrão do JSON)")
+    @Step("Try logging in without password (default user from JSON)")
     public void tryLoginWithoutPassword() {
         tryLoginWithoutPassword(testData.user("standard"));
     }
 
-    @Step("Tentar login com usuário bloqueado")
+    @Step("Try logging in with locked user")
     public void loginWithLockedOutUser(String password) {
         login(testData.user("lockedOut"), password);
     }
 
-    @Step("Tentar login com usuário bloqueado (dados do JSON)")
+    @Step("Try logging in with locked user (data from JSON)")
     public void loginWithLockedOutUser() {
         loginWithLockedOutUser(testData.password());
     }
 
-    @Step("Login com usuário performance_glitch_user")
+    @Step("Log in with performance_glitch_user")
     public void loginWithPerformanceGlitchUser(String password) {
         login(testData.user("performanceGlitch"), password);
     }
 
-    @Step("Login com usuário performance_glitch_user (dados do JSON)")
+    @Step("Log in with performance_glitch_user (data from JSON)")
     public void loginWithPerformanceGlitchUser() {
         loginWithPerformanceGlitchUser(testData.password());
     }
 
-    @Step("Login com performance_glitch_user medindo duração")
+    @Step("Log in with performance_glitch_user and measure duration")
     public long loginWithPerformanceGlitchUserAndMeasureDurationMs() {
         long start = System.nanoTime();
         loginWithPerformanceGlitchUser();
@@ -186,22 +186,22 @@ public class LoginPage {
         return (end - start) / 1_000_000;
     }
 
-    @Step("Login com usuário padrão (dados do JSON)")
+    @Step("Log in with default user (data from JSON)")
     public void loginWithStandardUser() {
         login(testData.user("standard"), testData.password());
     }
 
-    @Step("Login com usuário problem_user (dados do JSON)")
+    @Step("Log in with problem_user (data from JSON)")
     public void loginWithProblemUser() {
         login(testData.user("problem"), testData.password());
     }
 
-    @Step("Login com usuário error_user (dados do JSON)")
+    @Step("Log in with error_user (data from JSON)")
     public void loginWithErrorUser() {
         login(testData.user("error"), testData.password());
     }
 
-    @Step("Login com usuário visual_user (dados do JSON)")
+    @Step("Log in with visual_user (data from JSON)")
     public void loginWithVisualUser() {
         login(testData.user("visual"), testData.password());
     }

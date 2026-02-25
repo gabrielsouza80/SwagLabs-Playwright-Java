@@ -22,7 +22,7 @@ public class ComponentsPage {
         this.testData = TestData.get();
     }
 
-    @Step("Adicionar produto Backpack ao carrinho")
+    @Step("Add Backpack to cart")
     public void addBackpackToCart() {
         page.locator(ADD_BACKPACK_BUTTON).click();
     }
@@ -46,7 +46,7 @@ public class ComponentsPage {
         return getCartBadgeCount() == expectedCount;
     }
 
-    @Step("Abrir página do carrinho")
+    @Step("Open cart page")
     public void openCart() {
         page.locator(CART_LINK).click();
     }
@@ -56,18 +56,18 @@ public class ComponentsPage {
                 && testData.expected("cartTitle").equals(page.locator(TITLE).innerText().trim());
     }
 
-    @Step("Abrir menu lateral")
+    @Step("Open side menu")
     public void openMenu() {
         page.locator(OPEN_MENU).click();
     }
 
-    @Step("Fazer logout")
+    @Step("Do logout")
     public void logout() {
         openMenu();
         page.locator(LOGOUT_SIDEBAR_LINK).click();
     }
 
-    @Step("Resetar estado da aplicação")
+    @Step("Reset application state")
     public void resetAppState() {
         openMenu();
         page.locator(RESET_SIDEBAR_LINK).click();

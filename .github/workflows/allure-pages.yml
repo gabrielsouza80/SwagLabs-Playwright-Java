@@ -123,11 +123,11 @@ jobs:
             const body = `${marker}
             ## 📊 Allure Report
 
-            - 🌐 Online (última execução publicada em main): ${pagesUrl}
-            - 📄 Single-file (última execução publicada em main): ${singleFileUrl}
-            - 🧪 Artefatos desta execução do PR: ${runUrl}
+            - 🌐 Online (latest execution published from main): ${pagesUrl}
+            - 📄 Single-file (latest execution published from main): ${singleFileUrl}
+            - 🧪 Artifacts from this PR execution: ${runUrl}
 
-            > Nota: para PR, o deploy em GitHub Pages não é executado. O link online reflete a última publicação da branch main.`;
+            > Note: for PRs, GitHub Pages deployment is not executed. The online link reflects the latest publication from the main branch.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner,

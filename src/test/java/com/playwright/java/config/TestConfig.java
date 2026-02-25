@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-// Classe responsável por centralizar as configurações do teste.
-// Exemplo: URL, usuário, senha e modo headless.
+// Class responsible for centralizing test configuration.
+// Example: URL, user, password, and headless mode.
 public class TestConfig {
-    // Valores finais usados durante os testes.
+    // Final values used during test execution.
     private final String baseUrl;
     private final String username;
     private final String password;
@@ -19,7 +19,7 @@ public class TestConfig {
     private final int slowMoMs;
     private final boolean screenshotOnTeardown;
 
-    // Construtor privado: força a criação via método load().
+    // Private constructor: forces creation through load().
     private TestConfig(
             String baseUrl,
             String username,
@@ -43,24 +43,24 @@ public class TestConfig {
         this.screenshotOnTeardown = screenshotOnTeardown;
     }
 
-    // Lê configurações do arquivo config.properties
-    // e permite sobrescrever por parâmetros -D no Maven.
+    // Reads configuration from config.properties
+    // and allows overriding with Maven -D parameters.
     public static TestConfig load() {
-        // Estrutura que armazena pares chave=valor.
+        // Structure that stores key=value pairs.
         Properties properties = new Properties();
 
-        // Tenta ler o arquivo src/test/resources/config/config.properties do classpath.
+        // Tries to read src/test/resources/config/config.properties from classpath.
         try (InputStream input = TestConfig.class.getClassLoader().getResourceAsStream("config/config.properties")) {
             if (input == null) {
                 throw new IllegalStateException("config.properties was not found in test resources");
             }
             properties.load(input);
         } catch (IOException exception) {
-            // Interrompe com mensagem clara se falhar ao ler o arquivo.
+            // Stops execution with a clear message if file loading fails.
             throw new IllegalStateException("Failed to load config.properties", exception);
         }
 
-        // Prioridade: parâmetro de sistema (-D) > arquivo properties.
+        // Priority: system parameter (-D) > properties file.
         String baseUrl = readRequiredSetting("baseUrl", properties);
         String username = readRequiredSetting("username", properties);
         String password = readRequiredSetting("password", properties);
@@ -72,7 +72,7 @@ public class TestConfig {
         int slowMoMs = readOptionalIntSetting("slowMoMs", properties, 0);
         boolean screenshotOnTeardown = readOptionalBooleanSetting("screenshotOnTeardown", properties, true);
 
-        // Retorna um objeto imutável de configuração.
+        // Returns an immutable configuration object.
         return new TestConfig(
             baseUrl,
             username,
@@ -86,7 +86,7 @@ public class TestConfig {
             screenshotOnTeardown);
     }
 
-    // Getters no estilo Java moderno (nome curto).
+    // Getters in modern Java style (short names).
     public String baseUrl() {
         return baseUrl;
     }

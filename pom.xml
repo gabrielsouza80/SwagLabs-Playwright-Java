@@ -7,14 +7,32 @@
   <groupId>com.playwright.java</groupId>
   <artifactId>playwright-java-saucedemo</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
   <name>playwright-java-saucedemo</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <description>End-to-end web automation project for SauceDemo using Playwright, JUnit 5, and Allure.</description>
+  <url>https://github.com/gabrielsouza80/playwright-java-saucedemo</url>
+
+  <scm>
+    <url>https://github.com/gabrielsouza80/playwright-java-saucedemo</url>
+    <connection>scm:git:https://github.com/gabrielsouza80/playwright-java-saucedemo.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/gabrielsouza80/playwright-java-saucedemo.git</developerConnection>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
+
+    <playwright.version>1.43.0</playwright.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+    <allure.junit5.version>2.29.0</allure.junit5.version>
+    <jackson.databind.version>2.17.2</jackson.databind.version>
+
+    <maven.antrun.plugin.version>3.1.0</maven.antrun.plugin.version>
+    <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+    <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
+    <allure.maven.plugin.version>2.12.0</allure.maven.plugin.version>
+
     <includeTags></includeTags>
     <excludeTags></excludeTags>
     <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
@@ -24,40 +42,35 @@
     <dependency>
       <groupId>com.microsoft.playwright</groupId>
       <artifactId>playwright</artifactId>
-      <version>1.43.0</version>
+      <version>${playwright.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.10.2</version>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.qameta.allure</groupId>
       <artifactId>allure-junit5</artifactId>
-      <version>2.29.0</version>
+      <version>${allure.junit5.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.17.2</version>
+      <version>${jackson.databind.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+    <pluginManagement>
       <plugins>
-        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
         <plugin>
           <artifactId>maven-antrun-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>${maven.antrun.plugin.version}</version>
           <executions>
             <execution>
               <id>clean-test-report-folders</id>
@@ -81,18 +94,13 @@
             </execution>
           </executions>
         </plugin>
-        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>${maven.compiler.plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.2.5</version>
+          <version>${maven.surefire.plugin.version}</version>
           <configuration>
             <groups>${includeTags}</groups>
             <excludedGroups>${excludeTags}</excludedGroups>
@@ -104,7 +112,7 @@
         <plugin>
           <groupId>io.qameta.allure</groupId>
           <artifactId>allure-maven</artifactId>
-          <version>2.12.0</version>
+          <version>${allure.maven.plugin.version}</version>
           <configuration>
             <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
             <reportDirectory>${project.build.directory}/reports/allure-report</reportDirectory>
@@ -118,27 +126,6 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
-        <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.0.0</version>
         </plugin>
       </plugins>
     </pluginManagement>

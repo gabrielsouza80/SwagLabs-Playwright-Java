@@ -1,8 +1,8 @@
-{
+﻿{
   "meta": {
     "project": "playwright-java-saucedemo",
     "version": "1.0",
-    "description": "Dados de teste organizados por caso (TCxx)"
+    "description": "Test data organized by test case (TCxx)"
   },
   "global": {
     "baseUrl": "https://www.saucedemo.com/",
@@ -41,7 +41,7 @@
       "resetBackpackButton": "SAUCEDEMO-RESET-BACKPACK-BUTTON"
     },
     "messages": {
-      "resetKnownDefect": "Known issue: após Reset App State, o badge zera mas o botão do Backpack pode permanecer como Remove em vez de voltar para Add to cart."
+      "resetKnownDefect": "Known issue: after Reset App State, the badge resets, but the Backpack button may remain as Remove instead of returning to Add to cart."
     },
     "users": {
       "standard": "standard_user",
@@ -66,11 +66,11 @@
   "tests": {
     "LoginPageTest": {
       "TC01": {
-        "scenario": "login padrão com sucesso",
+        "scenario": "successful login with default user",
         "usernameRef": "standard"
       },
       "TC02": {
-        "scenario": "validar layout da tela de login",
+        "scenario": "validate login screen layout",
         "checks": [
           "logoVisible",
           "loginButtonVisible",
@@ -78,7 +78,7 @@
         ]
       },
       "TC03": {
-        "scenario": "validar usuários aceitos e senha padrão",
+        "scenario": "validate accepted users and default password",
         "expectedUsersRefs": [
           "standard",
           "lockedOut",
@@ -90,7 +90,7 @@
         "expectedPassword": "secret_sauce"
       },
       "TC04": {
-        "scenario": "erro sem usuário",
+        "scenario": "error without username",
         "input": {
           "username": "",
           "passwordRef": "global.password"
@@ -98,7 +98,7 @@
         "expectedErrorRef": "usernameRequired"
       },
       "TC05": {
-        "scenario": "erro sem senha",
+        "scenario": "error without password",
         "input": {
           "usernameRef": "standard",
           "password": ""
@@ -106,93 +106,93 @@
         "expectedErrorRef": "passwordRequired"
       },
       "TC06": {
-        "scenario": "erro usuário bloqueado",
+        "scenario": "error for locked out user",
         "usernameRef": "lockedOut",
         "expectedErrorRef": "lockedOut"
       },
       "TC07": {
-        "scenario": "login com performance_glitch_user",
+        "scenario": "login with performance_glitch_user",
         "usernameRef": "performanceGlitch"
       },
       "TC08": {
-        "scenario": "login com problem_user",
+        "scenario": "login with problem_user",
         "usernameRef": "problem"
       },
       "TC09": {
-        "scenario": "login com error_user",
+        "scenario": "login with error_user",
         "usernameRef": "error"
       },
       "TC10": {
-        "scenario": "login com visual_user",
+        "scenario": "login with visual_user",
         "usernameRef": "visual"
       }
     },
     "HomePageTest": {
       "TC11": {
-        "scenario": "elementos principais visíveis"
+        "scenario": "main elements are visible"
       },
       "TC12": {
-        "scenario": "título da home",
+        "scenario": "homepage title",
         "expectedTitleRef": "homeTitle"
       },
       "TC13": {
-        "scenario": "ordenação padrão",
+        "scenario": "default sorting",
         "expectedSortRef": "defaultSortLabel"
       },
       "TC14": {
-        "scenario": "quantidade de itens",
+        "scenario": "inventory item count",
         "expectedCountRef": "inventoryItemCount"
       },
       "TC15": {
-        "scenario": "ordenação nome crescente",
+        "scenario": "sort by name ascending",
         "sortOptionRef": "nameAsc"
       },
       "TC16": {
-        "scenario": "ordenação nome decrescente",
+        "scenario": "sort by name descending",
         "sortOptionRef": "nameDesc"
       },
       "TC17": {
-        "scenario": "ordenação preço crescente",
+        "scenario": "sort by price ascending",
         "sortOptionRef": "priceAsc"
       },
       "TC18": {
-        "scenario": "ordenação preço decrescente",
+        "scenario": "sort by price descending",
         "sortOptionRef": "priceDesc"
       },
       "TC19": {
-        "scenario": "adicionar backpack no carrinho",
+        "scenario": "add backpack to cart",
         "expectedCartBadge": 1
       },
       "TC20": {
-        "scenario": "remover backpack do carrinho",
+        "scenario": "remove backpack from cart",
         "expectedCartBadge": 0
       },
       "TC21": {
-        "scenario": "abrir página de detalhes ao clicar em um produto",
+        "scenario": "open details page when clicking the product",
         "productRef": "backpack",
         "expectedPriceRef": "backpack"
       },
       "TC22": {
-        "scenario": "exibir informações corretas do produto",
+        "scenario": "display correct product information",
         "productRef": "backpack"
       },
       "TC23": {
-        "scenario": "adicionar produto ao carrinho a partir de detalhes",
+        "scenario": "add product to cart from details page",
         "productRef": "backpack",
         "expectedCartBadge": 1
       },
       "TC24": {
-        "scenario": "voltar para lista ao clicar em Back to products",
+        "scenario": "return to list when click in Back to products",
         "productRef": "backpack",
         "expectedInventoryCountRef": "inventoryItemCount"
       },
       "TC25": {
-        "scenario": "manter estado do carrinho ao navegar para detalhes e voltar",
+        "scenario": "keep cart state when navigating to details and returning",
         "productRef": "backpack",
         "expectedCartBadge": 1
       },
       "TC26": {
-        "scenario": "acesso home com problem_user - anomalias",
+        "scenario": "access home with problem_user - anomalies",
         "usernameRef": "problem",
         "expectedAnomalies": [
           "brokenImageIssue",
@@ -200,7 +200,7 @@
         ]
       },
       "TC27": {
-        "scenario": "acesso home com performance_glitch_user - delay e anomalias",
+        "scenario": "access home with performance_glitch_user - delay and anomalies",
         "usernameRef": "performanceGlitch",
         "minExpectedDelayMsRef": "performanceGlitchDelayMs",
         "expectedAnomalies": [
@@ -208,14 +208,14 @@
         ]
       },
       "TC28": {
-        "scenario": "acesso home com error_user - anomalias",
+        "scenario": "access home with error_user - anomalies",
         "usernameRef": "error",
         "expectedAnomalies": [
           "buttonStateInconsistency"
         ]
       },
       "TC29": {
-        "scenario": "acesso home com visual_user - anomalias visuais",
+        "scenario": "access home with visual_user - visual anomalies",
         "usernameRef": "visual",
         "expectedAnomalies": [
           "textMisalignment",
@@ -225,7 +225,7 @@
     },
     "ComponentsTest": {
       "TC30": {
-        "scenario": "abrir página de carrinho"
+        "scenario": "open cart page"
       },
       "TC31": {
         "scenario": "reset app state",
@@ -235,7 +235,7 @@
         "knownIssueMessageRef": "resetKnownDefect"
       },
       "TC32": {
-        "scenario": "logout pelo menu global"
+        "scenario": "logout from global menu"
       }
     }
   }

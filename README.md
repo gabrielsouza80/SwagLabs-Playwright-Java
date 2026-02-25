@@ -1,15 +1,15 @@
 # Playwright Java SauceDemo
 
-Framework de automação web com Java 21, Playwright, JUnit 5 e Allure, focado em testes E2E do SauceDemo.
+Web automation framework with Java 21, Playwright, JUnit 5, and Allure, focused on SauceDemo E2E tests.
 
-## Visão geral
+## Overview
 
-- Arquitetura baseada em Page Object Model (POM)
-- Configuração centralizada por arquivo e propriedades de sistema
-- Execução por classe, método e tags (`includeTags` / `excludeTags`)
-- Relatórios Allure e screenshots automáticos por teste
+- Architecture based on Page Object Model (POM)
+- Centralized configuration via file and system properties
+- Execution by class, method, and tags (`includeTags` / `excludeTags`)
+- Allure reports and automatic screenshots per test
 
-## Stack técnica
+## Technical stack
 
 - Java 21
 - Maven
@@ -41,15 +41,15 @@ src/
         tests-data.json
 ```
 
-## Pré-requisitos
+## Prerequisites
 
-- JDK 21 configurado no ambiente
-- Maven disponível no terminal
-- Acesso à internet na primeira execução (download de dependências)
+- JDK 21 configured in the environment
+- Maven available in the terminal
+- Internet access on first run (dependency download)
 
-## Configuração
+## Configuration
 
-Arquivo principal: `src/test/resources/config/config.properties`
+Main file: `src/test/resources/config/config.properties`
 
 ```properties
 baseUrl=https://www.saucedemo.com/
@@ -58,123 +58,123 @@ password=secret_sauce
 headless=true
 ```
 
-Regras de leitura da configuração:
+Configuration resolution rules:
 
-1. Valor informado por `-D` no Maven
-2. Valor presente em `config.properties`
+1. Value passed with Maven `-D`
+2. Value present in `config.properties`
 
-> Observação: as chaves `baseUrl`, `username`, `password` e `headless` são obrigatórias.
+> Note: `baseUrl`, `username`, `password`, and `headless` keys are required.
 
-Dados de teste centralizados:
+Centralized test data:
 
-- Arquivo: `src/test/resources/data/tests-data.json`
-- Uso: mensagens esperadas, opções de sort, usuários alternativos e demais valores de cenário
+- File: `src/test/resources/data/tests-data.json`
+- Usage: expected messages, sorting options, alternative users, and other scenario values
 
-## Execução dos testes
+## Test execution
 
-Executar suíte completa:
+Run full suite:
 
 ```bash
 mvn test
 ```
 
-Executar com navegador visível:
+Run with visible browser:
 
 ```bash
 mvn test -Dheadless=false
 ```
 
-Executar uma classe:
+Run one class:
 
 ```bash
 mvn -Dtest=HomePageTest test
 ```
 
-Executar um método:
+Run one method:
 
 ```bash
 mvn -Dtest=LoginPageTest#shouldLoginWithStandardUser test
 ```
 
-Executar por tag:
+Run by tag:
 
 ```bash
 mvn test -DincludeTags=smoke
 ```
 
-Excluir tag:
+Exclude tag:
 
 ```bash
 mvn test -DexcludeTags=menu
 ```
 
-## Relatórios e evidências
+## Reports and evidence
 
-Após a execução:
+After execution:
 
-- Resultado Allure: `target/allure-results`
-- Relatório HTML: `target/reports/allure-report/index.html`
+- Allure results: `target/allure-results`
+- HTML report: `target/reports/allure-report/index.html`
 - Screenshots: `target/reports/screenshots`
 
-Gerar e abrir relatório Allure local:
+Generate and open local Allure report:
 
 ```bash
 mvn allure:serve
 ```
 
-## Pipeline e relatório online (GitHub Pages)
+## Pipeline and online report (GitHub Pages)
 
-Este repositório possui pipeline em [.github/workflows/allure-pages.yml](.github/workflows/allure-pages.yml) para:
+This repository includes a pipeline in [.github/workflows/allure-pages.yml](.github/workflows/allure-pages.yml) to:
 
-- Executar testes automaticamente no GitHub Actions
-- Gerar Allure report com histórico (Trend entre execuções)
-- Publicar relatório online na branch `gh-pages`
-- Gerar versão `single-file` do Allure e anexar como artifact
-- Comentar automaticamente no PR com links do relatório e artefatos da execução
+- Run tests automatically in GitHub Actions
+- Generate Allure report with history (trend between runs)
+- Publish online report to branch `gh-pages`
+- Generate Allure `single-file` version and upload it as an artifact
+- Automatically comment on PRs with report and execution artifact links
 
-URL do relatório online (após primeira execução da pipeline):
+Online report URL (after first successful pipeline run):
 
 ```text
 https://<seu-usuario>.github.io/<seu-repositorio>/
 ```
 
-Exemplo para este projeto:
+Example for this project:
 
 ```text
 https://gabrielsouza80.github.io/playwright-java-saucedemo/
 ```
 
-Arquivo single-file publicado:
+Published single-file URL:
 
 ```text
 https://gabrielsouza80.github.io/playwright-java-saucedemo/single-file/index.html
 ```
 
-### Como habilitar no GitHub
+### How to enable on GitHub
 
-1. Faça push do repositório com o workflow.
-2. Vá em **Settings > Pages**.
-3. Em **Build and deployment**, selecione **Deploy from a branch**.
-4. Escolha a branch **gh-pages** e a pasta **/(root)**.
+1. Push the repository with the workflow.
+2. Go to **Settings > Pages**.
+3. Under **Build and deployment**, select **Deploy from a branch**.
+4. Choose branch **gh-pages** and folder **/(root)**.
 
-> Dica: em repositórios novos, a branch `gh-pages` é criada automaticamente após a primeira execução bem-sucedida do workflow.
+> Tip: in new repositories, branch `gh-pages` is created automatically after the first successful workflow run.
 
-## Convenções de testes
+## Test conventions
 
-- Casos identificados por `TCxx` no `@DisplayName`
-- Tags funcionais e de execução (`home`, `login`, `smoke`, `cart`, `menu`, etc.)
-- Fluxos comuns centralizados em `BaseTest`
-- Regras de tela encapsuladas em Page Objects
+- Cases identified by `TCxx` in `@DisplayName`
+- Functional and execution tags (`home`, `login`, `smoke`, `cart`, `menu`, etc.)
+- Common flows centralized in `BaseTest`
+- Screen rules encapsulated in Page Objects
 
-## Glossário rápido
+## Quick glossary
 
-- CI (Continuous Integration): execução automática de testes a cada push/PR
-- CD (Continuous Delivery): publicação automática do relatório (Allure no Pages)
-- Single-file: relatório Allure em um único HTML (bom para compartilhar, pode ficar pesado)
+- CI (Continuous Integration): automatic test execution on every push/PR
+- CD (Continuous Delivery): automatic report publishing (Allure on Pages)
+- Single-file: Allure report in a single HTML file (good for sharing, can become heavy)
 
-## Troubleshooting rápido
+## Quick troubleshooting
 
-- Falha por configuração ausente: valide `config.properties` e nomes das chaves
-- Allure em branco ao abrir HTML direto: prefira `mvn allure:serve`
-- Widget `Categories` vazio: esperado quando não existem testes `failed`/`broken` (suíte 100% verde)
-- Erros visuais no VS Code após refactor: reinicie o Java Language Server
+- Missing configuration failure: validate `config.properties` and key names
+- Empty Allure when opening static HTML directly: prefer `mvn allure:serve`
+- Empty `Categories` widget: expected when there are no `failed`/`broken` tests (100% green suite)
+- Visual glitches in VS Code after refactor: restart the Java Language Server

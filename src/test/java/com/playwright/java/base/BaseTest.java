@@ -30,22 +30,22 @@ import com.playwright.java.pages.ComponentsPage;
 import com.playwright.java.pages.HomePage;
 import com.playwright.java.pages.LoginPage;
 
-// Classe base de todos os testes.
-// Tudo que é comum (abrir browser, login, fechar browser) fica aqui.
+// Base class for all tests.
+// Shared setup and teardown (open browser, login, close browser) lives here.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BaseTest {
-    // Objetos principais do Playwright.
+    // Main Playwright objects.
     protected Playwright playwright;
     protected Browser browser;
     protected BrowserContext context;
     protected Page page;
     protected Path authStorageStatePath;
 
-    // Configurações carregadas de src/test/resources/config.properties.
+    // Configuration loaded from src/test/resources/config.properties.
     protected TestConfig config;
     protected TestData testData;
 
-    // Page Objects reutilizados em qualquer teste.
+    // Page Objects reused in every test.
     protected LoginPage loginPage;
     protected HomePage homePage;
     protected ComponentsPage componentsPage;
@@ -54,8 +54,8 @@ public abstract class BaseTest {
         return true;
     }
 
-    // Executa uma vez por classe de teste.
-    // Faz login uma única vez e salva o estado autenticado.
+    // Runs once per test class.
+    // Performs login once and saves authenticated storage state.
     @BeforeAll
     void setUpSuite() {
         config = TestConfig.load();
@@ -96,8 +96,8 @@ public abstract class BaseTest {
         authContext.close();
     }
 
-    // Executa antes de cada teste: cria contexto isolado e já autenticado.
-    // Assim os testes ficam independentes entre si.
+    // Runs before each test: creates an isolated and already authenticated context.
+    // This keeps tests independent from one another.
     @BeforeEach
     void setUpTest() {
         Allure.label("owner", "Gabriel Souza");
@@ -133,7 +133,7 @@ public abstract class BaseTest {
         }
     }
 
-    // Executa após cada teste para garantir isolamento.
+    //Runs after each test to ensure isolation.
     @AfterEach
     void tearDownTest(TestInfo testInfo) {
         saveScreenshot(testInfo);
@@ -143,8 +143,8 @@ public abstract class BaseTest {
         }
     }
 
-    // Tira screenshot ao final de cada teste.
-    // Arquivos ficam em target/reports/screenshots e também são anexados ao Allure.
+    // Takes a screenshot at the end of each test.
+    // Files are stored in target/reports/screenshots and attached to Allure.
     private void saveScreenshot(TestInfo testInfo) {
         if (page == null || !config.screenshotOnTeardown()) {
             return;
@@ -188,7 +188,7 @@ public abstract class BaseTest {
         targetPage.setDefaultNavigationTimeout(config.navigationTimeoutMs());
     }
 
-    // Escreve informações de ambiente para aparecer na aba Environment do Allure.
+    // Writes environment information to the Allure Environment tab.
     private void writeAllureEnvironment() {
         try {
             Path allureResultsDir = Path.of("target", "allure-results");
@@ -232,7 +232,7 @@ public abstract class BaseTest {
         }
     }
 
-    // Executa uma vez por classe de teste.
+    // Runs once per test class.
     @AfterAll
     void tearDownSuite() {
         if (browser != null) {
