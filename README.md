@@ -1,15 +1,39 @@
 # Playwright Java SauceDemo
 
-Web automation framework with Java 21, Playwright, JUnit 5, and Allure, focused on SauceDemo E2E tests.
+End-to-end web test automation framework for SauceDemo, built with Java 21, Playwright, JUnit 5, and Allure.
+
+- Repository: https://github.com/gabrielsouza80/playwright-java-saucedemo
+- Online Allure report: https://gabrielsouza80.github.io/playwright-java-saucedemo/
+- Single-file Allure report: https://gabrielsouza80.github.io/playwright-java-saucedemo/single-file/index.html
+
+## Table of contents
+
+- [Overview](#overview)
+- [Technology stack](#technology-stack)
+- [Architecture and design](#architecture-and-design)
+- [Project structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Configuration](#configuration)
+- [Test data strategy](#test-data-strategy)
+- [How to run tests](#how-to-run-tests)
+- [Reports and evidence](#reports-and-evidence)
+- [VS Code tasks](#vs-code-tasks)
+- [CI/CD and GitHub Pages](#cicd-and-github-pages)
+- [Conventions](#conventions)
+- [Troubleshooting](#troubleshooting)
 
 ## Overview
 
-- Architecture based on Page Object Model (POM)
-- Centralized configuration via file and system properties
-- Execution by class, method, and tags (`includeTags` / `excludeTags`)
-- Allure reports and automatic screenshots per test
+This project validates key SauceDemo user journeys through maintainable, deterministic E2E tests.
 
-## Technical stack
+Primary goals:
+
+- Keep tests readable with Page Object Model (POM)
+- Centralize runtime configuration and test data
+- Support flexible execution by class, method, and tags
+- Produce rich execution evidence with Allure and screenshots
+
+## Technology stack
 
 - Java 21
 - Maven
@@ -17,7 +41,23 @@ Web automation framework with Java 21, Playwright, JUnit 5, and Allure, focused 
 - JUnit Jupiter (JUnit 5)
 - Allure Report
 
-## Estrutura do projeto
+## Architecture and design
+
+The framework follows a layered test architecture:
+
+- `base`: shared test lifecycle, browser context handling, common setup/teardown
+- `pages`: UI interaction layer (selectors + business actions)
+- `tests`: scenario layer (assertions and test intent)
+- `config`: configuration and externalized test data loading
+
+Core design decisions:
+
+- **POM-first approach** to reduce selector duplication
+- **Single source of truth** for configuration and expected values
+- **Per-test isolation** via context lifecycle to avoid state leakage
+- **Traceable execution** through Allure labels, steps, and attachments
+
+## Project structure
 
 ```text
 src/
@@ -29,9 +69,11 @@ src/
         TestConfig.java
         TestData.java
       pages/
+        ComponentsPage.java
         HomePage.java
         LoginPage.java
       tests/
+        ComponentsTest.java
         HomePageTest.java
         LoginPageTest.java
     resources/
@@ -43,13 +85,17 @@ src/
 
 ## Prerequisites
 
-- JDK 21 configured in the environment
-- Maven available in the terminal
-- Internet access on first run (dependency download)
+- JDK 21 installed and configured
+- Maven available in terminal (`mvn -v`)
+- Internet access on first execution (dependency download)
 
 ## Configuration
 
-Main file: `src/test/resources/config/config.properties`
+Primary configuration file:
+
+- `src/test/resources/config/config.properties`
+
+Example:
 
 ```properties
 baseUrl=https://www.saucedemo.com/
@@ -58,39 +104,58 @@ password=secret_sauce
 headless=true
 ```
 
-Configuration resolution rules:
+Resolution order:
 
-1. Value passed with Maven `-D`
-2. Value present in `config.properties`
+1. Maven system properties (`-Dkey=value`)
+2. `config.properties`
 
-> Note: `baseUrl`, `username`, `password`, and `headless` keys are required.
+Required keys:
 
-Centralized test data:
+- `baseUrl`
+- `username`
+- `password`
+- `headless`
 
-- File: `src/test/resources/data/tests-data.json`
-- Usage: expected messages, sorting options, alternative users, and other scenario values
+## Test data strategy
 
-## Test execution
+Test data is centralized in:
 
-Run full suite:
+- `src/test/resources/data/tests-data.json`
+
+Typical contents:
+
+- Expected messages and labels
+- Product values (name, price, description)
+- Route fragments and threshold values
+- Scenario-specific values by test case (`TCxx`)
+
+Benefits:
+
+- Easier maintenance during UI/content changes
+- Lower code churn in test classes
+- Better separation of test intent and raw data
+
+## How to run tests
+
+Run the complete suite:
 
 ```bash
 mvn test
 ```
 
-Run with visible browser:
+Run in headed mode:
 
 ```bash
 mvn test -Dheadless=false
 ```
 
-Run one class:
+Run a single class:
 
 ```bash
 mvn -Dtest=HomePageTest test
 ```
 
-Run one method:
+Run a single method:
 
 ```bash
 mvn -Dtest=LoginPageTest#shouldLoginWithStandardUser test
@@ -108,73 +173,84 @@ Exclude tag:
 mvn test -DexcludeTags=menu
 ```
 
+Compile and refresh classpath without executing tests:
+
+```bash
+mvn clean test -DskipTests
+```
+
 ## Reports and evidence
 
 After execution:
 
-- Allure results: `target/allure-results`
-- HTML report: `target/reports/allure-report/index.html`
+- Allure raw results: `target/allure-results`
+- Allure HTML report: `target/reports/allure-report/index.html`
 - Screenshots: `target/reports/screenshots`
 
-Generate and open local Allure report:
+Generate and serve report locally:
 
 ```bash
 mvn allure:serve
 ```
 
-## Pipeline and online report (GitHub Pages)
+## VS Code tasks
 
-This repository includes a pipeline in [.github/workflows/allure-pages.yml](.github/workflows/allure-pages.yml) to:
+This repository includes ready-to-run VS Code tasks in `.vscode/tasks.json`:
 
-- Run tests automatically in GitHub Actions
-- Generate Allure report with history (trend between runs)
-- Publish online report to branch `gh-pages`
-- Generate Allure `single-file` version and upload it as an artifact
-- Automatically comment on PRs with report and execution artifact links
+- `Java Refresh (clean + testCompile)` → `mvn clean test -DskipTests`
+- `Allure Serve` → `mvn allure:serve`
 
-Online report URL (after first successful pipeline run):
+Use via:
 
-```text
-https://<seu-usuario>.github.io/<seu-repositorio>/
-```
+- **Terminal > Run Task...**
+- Or **Command Palette > Tasks: Run Task**
 
-Example for this project:
+## CI/CD and GitHub Pages
 
-```text
-https://gabrielsouza80.github.io/playwright-java-saucedemo/
-```
+Workflow file:
 
-Published single-file URL:
+- `.github/workflows/allure-pages.yml`
 
-```text
-https://gabrielsouza80.github.io/playwright-java-saucedemo/single-file/index.html
-```
+Pipeline responsibilities:
 
-### How to enable on GitHub
+- Execute tests automatically on CI
+- Generate Allure report with history/trend
+- Publish report to `gh-pages`
+- Build and upload a single-file report artifact
+- Comment on pull requests with report links
 
-1. Push the repository with the workflow.
+GitHub Pages setup:
+
+1. Push repository with workflow enabled.
 2. Go to **Settings > Pages**.
-3. Under **Build and deployment**, select **Deploy from a branch**.
-4. Choose branch **gh-pages** and folder **/(root)**.
+3. In **Build and deployment**, choose **Deploy from a branch**.
+4. Select branch **gh-pages** and folder **/(root)**.
 
-> Tip: in new repositories, branch `gh-pages` is created automatically after the first successful workflow run.
+## Conventions
 
-## Test conventions
+- Test case IDs use `TCxx` in `@DisplayName`
+- Functional and execution tags include `home`, `login`, `smoke`, `cart`, `menu`
+- Shared lifecycle and reusable flows are centralized in `BaseTest`
+- UI behavior and selectors are encapsulated in Page Objects
 
-- Cases identified by `TCxx` in `@DisplayName`
-- Functional and execution tags (`home`, `login`, `smoke`, `cart`, `menu`, etc.)
-- Common flows centralized in `BaseTest`
-- Screen rules encapsulated in Page Objects
+## Troubleshooting
 
-## Quick glossary
+If tests fail due to configuration:
 
-- CI (Continuous Integration): automatic test execution on every push/PR
-- CD (Continuous Delivery): automatic report publishing (Allure on Pages)
-- Single-file: Allure report in a single HTML file (good for sharing, can become heavy)
+- Verify key names and values in `config.properties`
+- Confirm `-D` overrides are valid and correctly typed
 
-## Quick troubleshooting
+If IDE shows false red errors after refactor/branch switch:
 
-- Missing configuration failure: validate `config.properties` and key names
-- Empty Allure when opening static HTML directly: prefer `mvn allure:serve`
-- Empty `Categories` widget: expected when there are no `failed`/`broken` tests (100% green suite)
-- Visual glitches in VS Code after refactor: restart the Java Language Server
+1. Run `mvn clean test -DskipTests`
+2. Run **Java: Clean Java Language Server Workspace**
+3. Reload VS Code window
+
+If Allure report appears empty:
+
+- Prefer `mvn allure:serve` over opening static HTML directly
+- Confirm that `target/allure-results` contains fresh execution files
+
+If `Categories` widget is empty:
+
+- This is expected when the suite has no `failed` or `broken` tests
