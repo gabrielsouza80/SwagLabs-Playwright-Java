@@ -1,1 +1,0 @@
-Known issue: after Reset App State, the badge resets, but the Backpack button may remain as Remove instead of returning to Add to cart.

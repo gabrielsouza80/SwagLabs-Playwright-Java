@@ -1,0 +1,1 @@
+problem_user anomalies -> brokenImage=true, startedWithRemove=false, removeDidNotSwitchToAdd=false, addDidNotSwitchToRemove=false
