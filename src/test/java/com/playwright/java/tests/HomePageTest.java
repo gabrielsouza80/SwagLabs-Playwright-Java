@@ -198,7 +198,8 @@ public class HomePageTest extends BaseTest {
                 assertTrue(homePage.isBackpackAddedToCart()));
 
         Allure.step("And cart badge should display 1 item", () ->
-                assertTrue(homePage.hasCartBadgeCount(1)));
+                assertTrue(homePage.hasCartBadgeCount(
+                        testData.testValueInt("HomePageTest", "TC19", "expectedCartBadge"))));
     }
 
     @Test
@@ -220,7 +221,8 @@ public class HomePageTest extends BaseTest {
                 homePage.removeBackpackFromCart());
 
         Allure.step("Then cart badge should display 0 item", () ->
-                assertTrue(homePage.hasCartBadgeCount(0)));
+                assertTrue(homePage.hasCartBadgeCount(
+                        testData.testValueInt("HomePageTest", "TC20", "expectedCartBadge"))));
     }
 
     @Test
@@ -453,6 +455,9 @@ public class HomePageTest extends BaseTest {
         });
 
         HomePage.HomeAnomalyResult anomalyResult = homePage.analyzeErrorUserHomeAnomalies();
+
+        Allure.step("And backpack button state should remain consistent after analysis", () ->
+                assertTrue(homePage.isBackpackReadyToAdd() || homePage.isBackpackAddedToCart()));
 
         Allure.step("And anomaly analysis should be attached", () ->
                 Allure.addAttachment(

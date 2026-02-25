@@ -81,14 +81,20 @@ public class ComponentsTest extends BaseTest {
                         testData.testValueInt("ComponentsTest", "TC31", "badgeAfterReset"))));
 
         Allure.step("And analyze Backpack button state after reset (known bug)", () -> {
-            if (!componentsPage.isBackpackReadyToAdd()) {
+                        boolean backpackReadyToAdd = componentsPage.isBackpackReadyToAdd();
+                        boolean knownDefectObserved = componentsPage.isBackpackAddedToCart();
+
+                        if (!backpackReadyToAdd && knownDefectObserved) {
                 Allure.addAttachment(
                         "Known Defect Observed",
                         "text/plain",
                         testData.message("resetKnownDefect"),
                         ".txt");
             }
-            assertTrue(true);
+
+                        assertTrue(
+                                        backpackReadyToAdd || knownDefectObserved,
+                                        "Backpack button state after reset is inconsistent: neither Add nor Remove state detected.");
         });
     }
 
