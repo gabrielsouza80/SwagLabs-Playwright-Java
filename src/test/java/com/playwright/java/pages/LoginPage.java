@@ -132,7 +132,7 @@ public class LoginPage {
 
     @Step("Validar que usuário não foi redirecionado para inventário")
     public boolean isOnInventoryPage() {
-        return page.url().contains("/inventory.html");
+        return page.url().contains(testData.route("inventory"));
     }
 
     @Step("Tentar login sem usuário")
@@ -181,7 +181,7 @@ public class LoginPage {
     public long loginWithPerformanceGlitchUserAndMeasureDurationMs() {
         long start = System.nanoTime();
         loginWithPerformanceGlitchUser();
-        page.waitForURL("**/inventory.html");
+        page.waitForURL("**" + testData.route("inventory"));
         long end = System.nanoTime();
         return (end - start) / 1_000_000;
     }

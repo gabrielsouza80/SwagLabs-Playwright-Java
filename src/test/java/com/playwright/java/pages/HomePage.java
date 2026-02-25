@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 // Page Object da Home/Inventory.
 // Reúne ações e validações funcionais da página principal após login.
 public class HomePage {
-    private static final long PERFORMANCE_GLITCH_DELAY_THRESHOLD_MS = 1500;
-
     private final Page page;
     private final TestData testData;
 
@@ -28,7 +26,10 @@ public class HomePage {
     private static final String RESET_SIDEBAR_LINK = "[data-test='reset-sidebar-link']";
     private static final String FOOTER = "[data-test='footer']";
     private static final String PRODUCT_NAME = "[data-test='inventory-item-name']";
+    private static final String PRODUCT_DESC = "[data-test='inventory-item-desc']";
     private static final String PRODUCT_PRICE = "[data-test='inventory-item-price']";
+    private static final String BACK_TO_PRODUCTS_BUTTON = "[data-test='back-to-products']";
+    private static final String ADD_TO_CART_DETAILS_BUTTON = "[data-test='add-to-cart']";
     private static final String ADD_BACKPACK_BUTTON = "[data-test='add-to-cart-sauce-labs-backpack']";
     private static final String REMOVE_BACKPACK_BUTTON = "[data-test='remove-sauce-labs-backpack']";
 
@@ -151,7 +152,7 @@ public class HomePage {
     // Validação principal de carregamento da home.
     @Step("Validar carregamento da Home/Inventory")
     public boolean isLoaded() {
-        return page.url().contains("/inventory.html")
+        return page.url().contains(testData.route("inventory"))
                 && page.locator(INVENTORY_LIST).isVisible()
                 && testData.expected("homeTitle").equals(page.locator(TITLE).innerText().trim());
     }
@@ -224,6 +225,52 @@ public class HomePage {
     @Step("Clicar no produto com ID: {itemDataTest}")
     public void clickProductByDataTest(String itemDataTest) {
         page.locator("[data-test='" + itemDataTest + "-img-link']").click();
+    }
+
+    @Step("Validar carregamento da página de detalhes do produto")
+    public boolean isProductDetailsLoaded() {
+        return page.url().contains(testData.route("productDetails"))
+                && page.locator(PRODUCT_NAME).isVisible()
+                && page.locator(PRODUCT_DESC).isVisible()
+                && page.locator(PRODUCT_PRICE).isVisible();
+    }
+
+    @Step("Obter nome do produto nos detalhes")
+    public String getProductDetailsName() {
+        return page.locator(PRODUCT_NAME).innerText().trim();
+    }
+
+    @Step("Obter descrição do produto nos detalhes")
+    public String getProductDetailsDescription() {
+        return page.locator(PRODUCT_DESC).innerText().trim();
+    }
+
+    @Step("Obter preço do produto nos detalhes")
+    public String getProductDetailsPrice() {
+        return page.locator(PRODUCT_PRICE).innerText().trim();
+    }
+
+    @Step("Adicionar ao carrinho a partir de detalhes")
+    public void addToCartFromProductDetails() {
+        if (page.locator(ADD_TO_CART_DETAILS_BUTTON).count() > 0) {
+            page.locator(ADD_TO_CART_DETAILS_BUTTON).click();
+            return;
+        }
+        page.locator("button[data-test^='add-to-cart']").first().click();
+    }
+
+    public boolean isAddToCartButtonVisibleOnDetails() {
+        return page.locator(ADD_TO_CART_DETAILS_BUTTON).count() > 0
+                || page.locator("button[data-test^='add-to-cart']").count() > 0;
+    }
+
+    @Step("Voltar dos detalhes para a listagem")
+    public void backToProductsFromDetails() {
+        page.locator(BACK_TO_PRODUCTS_BUTTON).click();
+    }
+
+    public boolean isBackButtonVisibleOnDetails() {
+        return page.locator(BACK_TO_PRODUCTS_BUTTON).isVisible();
     }
 
     // Captura os nomes de todos os produtos visíveis.
@@ -311,30 +358,33 @@ public class HomePage {
 
     // Anomalia observada no problem_user: imagens da lista usam placeholder sl-404.
     public boolean areAllInventoryImagesUsingErrorPlaceholder() {
+        String errorPlaceholder = testData.knownIndicator("imageErrorPlaceholder");
         List<String> imageSources = page.locator("img[data-test$='-img']").all().stream()
                 .map(locator -> locator.getAttribute("src"))
                 .filter(source -> source != null && !source.isBlank())
                 .collect(Collectors.toList());
 
-        return !imageSources.isEmpty() && imageSources.stream().allMatch(source -> source.contains("sl-404"));
+        return !imageSources.isEmpty() && imageSources.stream().allMatch(source -> source.contains(errorPlaceholder));
     }
 
     // Versão menos rígida: confirma pelo menos uma imagem quebrada no inventário.
     public boolean hasAnyInventoryImageUsingErrorPlaceholder() {
+        String errorPlaceholder = testData.knownIndicator("imageErrorPlaceholder");
         return page.locator("img[data-test$='-img']").all().stream()
                 .map(locator -> locator.getAttribute("src"))
                 .filter(source -> source != null && !source.isBlank())
-                .anyMatch(source -> source.contains("sl-404"));
+            .anyMatch(source -> source.contains(errorPlaceholder));
     }
 
     // Anomalia visual do visual_user: alguns nomes de produtos estão com texto desalinhado.
     public boolean hasAnyProductNameWithMisalignment() {
-        return page.locator("[data-test='inventory-item-name'].align_right").count() > 0;
+        return page.locator("[data-test='inventory-item-name']." + testData.knownIndicator("visualNameMisalignmentClass"))
+                .count() > 0;
     }
 
     // Anomalia visual do visual_user: alguns botões estão desalinhados visualmente.
     public boolean hasAnyButtonWithMisalignment() {
-        return page.locator("button.btn_inventory_misaligned").count() > 0;
+        return page.locator("button." + testData.knownIndicator("visualButtonMisalignmentClass")).count() > 0;
     }
 
     private HomeAnomalyResult analyzeCurrentHomeAnomalies() {
@@ -387,7 +437,7 @@ public class HomePage {
         return new PerformanceGlitchHomeAnomalyResult(
                 homeAnomalyResult,
                 loginDurationMs,
-                PERFORMANCE_GLITCH_DELAY_THRESHOLD_MS);
+                testData.thresholdMs("performanceGlitchDelayMs"));
     }
 
     // Retorna quantidade de itens no badge do carrinho.
@@ -411,7 +461,7 @@ public class HomePage {
 
     // Valida se está na página de carrinho.
     public boolean isCartPageLoaded() {
-        return page.url().contains("/cart.html")
+        return page.url().contains(testData.route("cart"))
                 && testData.expected("cartTitle").equals(page.locator(TITLE).innerText().trim());
     }
 

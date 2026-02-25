@@ -68,6 +68,38 @@ public final class TestData {
         return requiredText("global", "errors", key);
     }
 
+    public String route(String key) {
+        return requiredText("global", "routes", key);
+    }
+
+    public int thresholdMs(String key) {
+        return requiredNode("global", "thresholds", key).asInt();
+    }
+
+    public String product(String productKey, String field) {
+        return requiredText("global", "products", productKey, field);
+    }
+
+    public String knownIndicator(String key) {
+        return requiredText("global", "knownIndicators", key);
+    }
+
+    public String knownIssue(String key) {
+        return requiredText("global", "knownIssues", key);
+    }
+
+    public String message(String key) {
+        return requiredText("global", "messages", key);
+    }
+
+    public String testValue(String testClass, String tcKey, String field) {
+        return requiredText("tests", testClass, tcKey, field);
+    }
+
+    public int testValueInt(String testClass, String tcKey, String field) {
+        return requiredNode("tests", testClass, tcKey, field).asInt();
+    }
+
     private String requiredText(String... path) {
         JsonNode node = requiredNode(path);
         return node.asText();

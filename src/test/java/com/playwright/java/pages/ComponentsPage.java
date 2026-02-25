@@ -52,7 +52,7 @@ public class ComponentsPage {
     }
 
     public boolean isCartPageLoaded() {
-        return page.url().contains("/cart.html")
+        return page.url().contains(testData.route("cart"))
                 && testData.expected("cartTitle").equals(page.locator(TITLE).innerText().trim());
     }
 

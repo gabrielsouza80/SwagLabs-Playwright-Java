@@ -25,10 +25,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import com.playwright.java.config.TestConfig;
+import com.playwright.java.config.TestData;
 import com.playwright.java.pages.ComponentsPage;
 import com.playwright.java.pages.HomePage;
 import com.playwright.java.pages.LoginPage;
-import com.playwright.java.pages.ProductDetailsPage;
 
 // Classe base de todos os testes.
 // Tudo que é comum (abrir browser, login, fechar browser) fica aqui.
@@ -43,12 +43,12 @@ public abstract class BaseTest {
 
     // Configurações carregadas de src/test/resources/config.properties.
     protected TestConfig config;
+    protected TestData testData;
 
     // Page Objects reutilizados em qualquer teste.
     protected LoginPage loginPage;
     protected HomePage homePage;
     protected ComponentsPage componentsPage;
-    protected ProductDetailsPage productDetailsPage;
 
     protected boolean requiresAuthenticatedSession() {
         return true;
@@ -59,6 +59,7 @@ public abstract class BaseTest {
     @BeforeAll
     void setUpSuite() {
         config = TestConfig.load();
+        testData = TestData.get();
 
         writeAllureEnvironment();
 
@@ -116,12 +117,13 @@ public abstract class BaseTest {
         loginPage = new LoginPage(page);
         homePage = new HomePage(page);
         componentsPage = new ComponentsPage(page);
-        productDetailsPage = new ProductDetailsPage(page);
 
         if (requiresAuthenticatedSession()) {
+            String inventoryRoute = testData.route("inventory");
+            String normalizedRoute = inventoryRoute.startsWith("/") ? inventoryRoute.substring(1) : inventoryRoute;
             String inventoryUrl = config.baseUrl().endsWith("/")
-                    ? config.baseUrl() + "inventory.html"
-                    : config.baseUrl() + "/inventory.html";
+                ? config.baseUrl() + normalizedRoute
+                : config.baseUrl() + inventoryRoute;
 
             page.navigate(inventoryUrl);
             assertTrue(homePage.isLoaded());
