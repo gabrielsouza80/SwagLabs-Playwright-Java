@@ -36,33 +36,33 @@ public class LoginPageTest extends BaseTest {
     @Tag("login")
     @Tag("smoke")
     @Tag("tc01")
-    @DisplayName("TC01 - Deve realizar login com usuário padrão")
+    @DisplayName("TC01 - Should log in with standard user")
     @Story("Successful Login")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Valida que o usuário padrão autentica com sucesso e visualiza a home de inventário.")
+    @Description("Validates that the standard user can authenticate successfully and access inventory.")
     void shouldLoginWithStandardUser() {
-        Allure.step("Dado que o usuário abriu a tela de login", () ->
+        Allure.step("Given the user opened the login screen", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando realizar login com o usuário padrão", () ->
+        Allure.step("When logging in with standard user", () ->
                 loginPage.loginWithStandardUser());
 
-        Allure.step("Então deve acessar a home de inventário", () ->
+        Allure.step("Then the user should access the inventory home", () ->
                 assertTrue(homePage.isLoaded()));
     }
 
     @Test
     @Tag("login")
     @Tag("tc02")
-    @DisplayName("TC02 - Deve exibir logo e campos obrigatórios na tela de login")
+    @DisplayName("TC02 - Should display logo and required login fields")
     @Story("Login Screen Layout")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida que a tela de login exibe logo, inputs de usuário/senha e botão de login.")
+    @Description("Validates that login screen displays logo, username and password inputs, and login button.")
     void shouldDisplayLogoAndLoginFormElements() {
-        Allure.step("Dado que o usuário abriu a página de login", () ->
+        Allure.step("Given the user opened the login page", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando validar logo, botão de login e painel de credenciais", () -> {
+        Allure.step("When validating logo, login button, and credentials panel", () -> {
             assertTrue(loginPage.isLogoVisible());
             assertTrue(loginPage.isUsernameInputVisible());
             assertTrue(loginPage.isPasswordInputVisible());
@@ -70,25 +70,25 @@ public class LoginPageTest extends BaseTest {
             assertTrue(loginPage.isCredentialsPanelVisible());
         });
 
-        Allure.step("Então a estrutura da tela de login deve estar visível", () ->
+        Allure.step("Then the login screen structure should be visible", () ->
                 assertTrue(loginPage.isLoaded()));
     }
 
     @Test
     @Tag("login")
     @Tag("tc03")
-    @DisplayName("TC03 - Deve exibir usuários aceitos e senha padrão")
+    @DisplayName("TC03 - Should display accepted users and default password")
     @Story("Login Screen Content")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida o conteúdo textual de usuários aceitos e dica de senha da tela de login.")
+    @Description("Validates accepted users text and password hint on the login screen.")
     void shouldDisplayAcceptedUsersAndPasswordHint() {
-        Allure.step("Dado que o usuário está na tela de login", () ->
+        Allure.step("Given the user is on the login screen", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando consultar a lista de usuários aceitos", () ->
+        Allure.step("When checking accepted users list", () ->
                 assertTrue(loginPage.hasAllAcceptedUsers()));
 
-        Allure.step("Então deve exibir a senha padrão secret_sauce", () ->
+        Allure.step("Then the default password hint should be displayed", () ->
                 assertTrue(loginPage.hasDefaultPasswordHint()));
     }
 
@@ -96,21 +96,21 @@ public class LoginPageTest extends BaseTest {
     @Tag("login")
     @Tag("negative")
     @Tag("tc04")
-    @DisplayName("TC04 - Deve exibir erro ao tentar login sem usuário")
+    @DisplayName("TC04 - Should display error when logging in without username")
     @Story("Login Validations")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Valida mensagem de erro ao tentar autenticar sem informar usuário.")
+    @Description("Validates error message when authenticating without username.")
     void shouldShowErrorWhenUsernameIsEmpty() {
-        Allure.step("Dado que o usuário está na tela de login", () ->
+        Allure.step("Given the user is on the login screen", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando tentar login sem informar usuário", () ->
+        Allure.step("When trying to login without username", () ->
                 loginPage.tryLoginWithoutUsername());
 
-        Allure.step("Então deve exibir erro de usuário obrigatório", () ->
+        Allure.step("Then username required error should be displayed", () ->
                 assertTrue(loginPage.hasErrorMessageContaining(testData.error("usernameRequired"))));
 
-        Allure.step("E não deve acessar a home de inventário", () -> {
+        Allure.step("And the user should not access inventory", () -> {
             assertTrue(loginPage.isLoaded());
             assertFalse(loginPage.isOnInventoryPage());
         });
@@ -120,21 +120,21 @@ public class LoginPageTest extends BaseTest {
     @Tag("login")
     @Tag("negative")
     @Tag("tc05")
-    @DisplayName("TC05 - Deve exibir erro ao tentar login sem senha")
+    @DisplayName("TC05 - Should display error when logging in without password")
     @Story("Login Validations")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Valida mensagem de erro ao tentar autenticar sem informar senha.")
+    @Description("Validates error message when authenticating without password.")
     void shouldShowErrorWhenPasswordIsEmpty() {
-        Allure.step("Dado que o usuário está na tela de login", () ->
+        Allure.step("Given the user is on the login screen", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando tentar login sem informar senha", () ->
+        Allure.step("When trying to login without password", () ->
                 loginPage.tryLoginWithoutPassword());
 
-        Allure.step("Então deve exibir erro de senha obrigatória", () ->
+        Allure.step("Then password required error should be displayed", () ->
                 assertTrue(loginPage.hasErrorMessageContaining(testData.error("passwordRequired"))));
 
-        Allure.step("E não deve acessar a home de inventário", () -> {
+        Allure.step("And the user should not access inventory", () -> {
             assertTrue(loginPage.isLoaded());
             assertFalse(loginPage.isOnInventoryPage());
         });
@@ -144,21 +144,21 @@ public class LoginPageTest extends BaseTest {
     @Tag("login")
     @Tag("negative")
     @Tag("tc06")
-    @DisplayName("TC06 - Deve exibir erro para usuário bloqueado")
+    @DisplayName("TC06 - Should display error for locked user")
     @Story("Login Validations")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Valida que usuário bloqueado não consegue autenticar e recebe mensagem adequada.")
+    @Description("Validates that locked user cannot authenticate and receives proper message.")
     void shouldShowErrorForLockedOutUser() {
-        Allure.step("Dado que o usuário está na tela de login", () ->
+        Allure.step("Given the user is on the login screen", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando tentar login com usuário bloqueado", () ->
+        Allure.step("When trying to login with locked user", () ->
                 loginPage.loginWithLockedOutUser());
 
-        Allure.step("Então deve exibir erro de usuário bloqueado", () ->
+        Allure.step("Then locked out error should be displayed", () ->
                 assertTrue(loginPage.hasErrorMessageContaining(testData.error("lockedOut"))));
 
-        Allure.step("E não deve acessar a home de inventário", () -> {
+        Allure.step("And the user should not access inventory", () -> {
             assertTrue(loginPage.isLoaded());
             assertFalse(loginPage.isOnInventoryPage());
         });
@@ -167,72 +167,72 @@ public class LoginPageTest extends BaseTest {
     @Test
     @Tag("login")
     @Tag("tc07")
-    @DisplayName("TC07 - Deve logar com performance_glitch_user e acessar inventário")
+    @DisplayName("TC07 - Should log in with performance_glitch_user")
     @Story("Alternative Valid Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida login com usuário alternativo aceito e acesso à home de inventário.")
+    @Description("Validates login with performance_glitch_user and access to inventory.")
     void shouldLoginWithPerformanceGlitchUser() {
-        Allure.step("Dado que o usuário está na tela de login", () ->
+        Allure.step("Given the user is on the login screen", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando realizar login com performance_glitch_user", () ->
+        Allure.step("When logging in with performance_glitch_user", () ->
                 loginPage.loginWithPerformanceGlitchUser());
 
-        Allure.step("Então deve acessar a home de inventário", () ->
+        Allure.step("Then the user should access inventory", () ->
                 assertTrue(homePage.isLoaded()));
     }
 
     @Test
     @Tag("login")
-        @Tag("tc08")
-        @DisplayName("TC08 - Deve logar com problem_user e acessar inventário")
+    @Tag("tc08")
+    @DisplayName("TC08 - Should log in with problem_user")
     @Story("Alternative Valid Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida login com problem_user e acesso à home de inventário.")
+    @Description("Validates login with problem_user and access to inventory.")
     void shouldLoginWithProblemUser() {
-        Allure.step("Dado que o usuário está na tela de login", () ->
+        Allure.step("Given the user is on the login screen", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando realizar login com problem_user", () ->
+        Allure.step("When logging in with problem_user", () ->
                 loginPage.loginWithProblemUser());
 
-        Allure.step("Então deve acessar a home de inventário", () ->
+        Allure.step("Then the user should access inventory", () ->
                 assertTrue(homePage.isLoaded()));
     }
 
     @Test
     @Tag("login")
-        @Tag("tc09")
-        @DisplayName("TC09 - Deve logar com error_user e acessar inventário")
+    @Tag("tc09")
+    @DisplayName("TC09 - Should log in with error_user")
     @Story("Alternative Valid Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida login com error_user e acesso à home de inventário.")
+    @Description("Validates login with error_user and access to inventory.")
     void shouldLoginWithErrorUser() {
-        Allure.step("Dado que o usuário está na tela de login", () ->
+        Allure.step("Given the user is on the login screen", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando realizar login com error_user", () ->
+        Allure.step("When logging in with error_user", () ->
                 loginPage.loginWithErrorUser());
 
-        Allure.step("Então deve acessar a home de inventário", () ->
+        Allure.step("Then the user should access inventory", () ->
                 assertTrue(homePage.isLoaded()));
     }
 
     @Test
     @Tag("login")
-        @Tag("tc10")
-        @DisplayName("TC10 - Deve logar com visual_user e acessar inventário")
+    @Tag("tc10")
+    @DisplayName("TC10 - Should log in with visual_user")
     @Story("Alternative Valid Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida login com visual_user e acesso à home de inventário.")
+    @Description("Validates login with visual_user and access to inventory.")
     void shouldLoginWithVisualUser() {
-        Allure.step("Dado que o usuário está na tela de login", () ->
+        Allure.step("Given the user is on the login screen", () ->
                 assertTrue(loginPage.isLoaded()));
 
-        Allure.step("Quando realizar login com visual_user", () ->
+        Allure.step("When logging in with visual_user", () ->
                 loginPage.loginWithVisualUser());
 
-        Allure.step("Então deve acessar a home de inventário", () ->
+        Allure.step("Then the user should access inventory", () ->
                 assertTrue(homePage.isLoaded()));
     }
 }

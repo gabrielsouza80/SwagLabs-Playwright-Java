@@ -3,6 +3,9 @@ package com.playwright.java.tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.playwright.java.base.BaseTest;
+import com.playwright.java.config.TestData;
+import com.playwright.java.pages.HomePage;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
@@ -16,11 +19,8 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import com.playwright.java.base.BaseTest;
-import com.playwright.java.config.TestData;
-import com.playwright.java.pages.HomePage;
 
-// Suíte de testes da HomePage com foco em funcionalidades principais.
+// HomePage test suite focused on core homepage behavior.
 @Epic("Web Automation")
 @Feature("Homepage")
 @Owner("Gabriel Souza")
@@ -28,231 +28,222 @@ import com.playwright.java.pages.HomePage;
 public class HomePageTest extends BaseTest {
     private final TestData testData = TestData.get();
 
-    // Valida carregamento da home e elementos básicos.
     @Test
     @Tag("home")
     @Tag("smoke")
     @Tag("tc11")
-    @DisplayName("TC11 - Deve exibir elementos principais da home")
+    @DisplayName("TC11 - Should display main homepage elements")
     @Story("Home Load")
-    @Owner("Gabriel Souza")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Valida carregamento da home após login e presença dos principais componentes da tela.")
+    @Description("Validates homepage loading after login and presence of key UI elements.")
     void shouldDisplayHomePageMainElements() {
-        Allure.step("Dado que o usuário está autenticado e na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is authenticated and on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando consultar o título e os elementos da Home", () -> {
+        Allure.step("When checking title and homepage elements", () -> {
             assertTrue(homePage.hasExpectedTitle());
             assertTrue(homePage.hasMainHomeElements());
         });
 
-        Allure.step("Então deve visualizar os elementos principais da Home", () ->
-            assertTrue(homePage.hasMainHomeElements()));
+        Allure.step("Then the main homepage elements should be visible", () ->
+                assertTrue(homePage.hasMainHomeElements()));
     }
 
-    // Valida título principal da página
     @Test
     @Tag("home")
     @Tag("tc12")
-    @DisplayName("TC12 - Deve exibir título Products")
+    @DisplayName("TC12 - Should display Products title")
     @Story("Home Header")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida o título da home como Products.")
+    @Description("Validates homepage title is Products.")
     void shouldDisplayProductsTitle() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando consultar o título exibido no cabeçalho", () ->
-            homePage.getPageTitle());
+        Allure.step("When checking the displayed header title", () ->
+                homePage.getPageTitle());
 
-        Allure.step("Então o título exibido deve ser Products", () ->
-            assertTrue(homePage.hasExpectedTitle()));
+        Allure.step("Then the displayed title should be Products", () ->
+                assertTrue(homePage.hasExpectedTitle()));
     }
 
-    // Valida opção de ordenação padrão.
     @Test
     @Tag("home")
     @Tag("tc13")
-    @DisplayName("TC13 - Deve exibir ordenação padrão Name (A to Z)")
+    @DisplayName("TC13 - Should display default sorting Name (A to Z)")
     @Story("Sorting")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida a opção padrão de ordenação na primeira carga da home.")
+    @Description("Validates default sorting option on first homepage load.")
     void shouldDisplayDefaultSortingOption() {
-        Allure.step("Dado que o usuário abriu a Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user opened the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando consultar a ordenação selecionada por padrão", () ->
-            homePage.getActiveSortOption());
+        Allure.step("When checking the selected default sorting option", () ->
+                homePage.getActiveSortOption());
 
-        Allure.step("Então a ordenação padrão deve ser Name (A to Z)", () ->
-            assertTrue(homePage.hasDefaultSortOption()));
+        Allure.step("Then default sorting should be Name (A to Z)", () ->
+                assertTrue(homePage.hasDefaultSortOption()));
     }
 
-    // Valida quantidade de produtos esperada no SauceDemo.
     @Test
     @Tag("home")
     @Tag("tc14")
-    @DisplayName("TC14 - Deve exibir 6 itens na listagem")
+    @DisplayName("TC14 - Should display 6 items in inventory list")
     @Story("Catalog")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida a quantidade esperada de produtos no inventário.")
+    @Description("Validates expected product count in inventory.")
     void shouldDisplaySixInventoryItems() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando consultar a quantidade de itens exibidos", () ->
-            homePage.getInventoryItemCount());
+        Allure.step("When checking number of displayed items", () ->
+                homePage.getInventoryItemCount());
 
-        Allure.step("Então a listagem deve conter 6 itens", () ->
-            assertTrue(homePage.hasExpectedInventoryItemCount()));
+        Allure.step("Then inventory list should contain 6 items", () ->
+                assertTrue(homePage.hasExpectedInventoryItemCount()));
     }
 
-    // Ordenação por nome crescente (A-Z).
     @Test
     @Tag("home")
     @Tag("sorting")
     @Tag("tc15")
-    @DisplayName("TC15 - Deve ordenar por nome crescente")
+    @DisplayName("TC15 - Should sort by name ascending")
     @Story("Sorting")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida ordenação por nome crescente (A to Z).")
+    @Description("Validates sorting by name ascending (A to Z).")
     void shouldSortProductsByNameAscending() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando selecionar ordenação por nome crescente (A-Z)", () ->
-            homePage.sortByNameAscending());
+        Allure.step("When selecting name ascending sorting (A-Z)", () ->
+                homePage.sortByNameAscending());
 
-        Allure.step("Então os nomes dos produtos devem estar em ordem crescente", () ->
-            assertTrue(homePage.areProductNamesSortedAscending()));
+        Allure.step("Then product names should be in ascending order", () ->
+                assertTrue(homePage.areProductNamesSortedAscending()));
     }
 
-    // Ordenação por nome decrescente (Z-A).
     @Test
     @Tag("home")
     @Tag("sorting")
     @Tag("tc16")
-    @DisplayName("TC16 - Deve ordenar por nome decrescente")
+    @DisplayName("TC16 - Should sort by name descending")
     @Story("Sorting")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida ordenação por nome decrescente (Z to A).")
+    @Description("Validates sorting by name descending (Z to A).")
     void shouldSortProductsByNameDescending() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando selecionar ordenação por nome decrescente (Z-A)", () ->
-            homePage.sortByNameDescending());
+        Allure.step("When selecting name descending sorting (Z-A)", () ->
+                homePage.sortByNameDescending());
 
-        Allure.step("Então os nomes dos produtos devem estar em ordem decrescente", () ->
-            assertTrue(homePage.areProductNamesSortedDescending()));
+        Allure.step("Then product names should be in descending order", () ->
+                assertTrue(homePage.areProductNamesSortedDescending()));
     }
 
-    // Ordenação por preço crescente.
     @Test
     @Tag("home")
     @Tag("sorting")
     @Tag("tc17")
-    @DisplayName("TC17 - Deve ordenar por preço crescente")
+    @DisplayName("TC17 - Should sort by price ascending")
     @Story("Sorting")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida ordenação por preço crescente (low to high).")
+    @Description("Validates sorting by price ascending (low to high).")
     void shouldSortProductsByPriceAscending() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando selecionar ordenação por preço crescente (low to high)", () ->
-            homePage.sortByPriceAscending());
+        Allure.step("When selecting price ascending sorting (low to high)", () ->
+                homePage.sortByPriceAscending());
 
-        Allure.step("Então os preços devem estar em ordem crescente", () ->
-            assertTrue(homePage.arePricesSortedAscending()));
+        Allure.step("Then prices should be in ascending order", () ->
+                assertTrue(homePage.arePricesSortedAscending()));
     }
 
-    // Ordenação por preço decrescente.
     @Test
     @Tag("home")
     @Tag("sorting")
     @Tag("tc18")
-    @DisplayName("TC18 - Deve ordenar por preço decrescente")
+    @DisplayName("TC18 - Should sort by price descending")
     @Story("Sorting")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida ordenação por preço decrescente (high to low).")
+    @Description("Validates sorting by price descending (high to low).")
     void shouldSortProductsByPriceDescending() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando selecionar ordenação por preço decrescente (high to low)", () ->
-            homePage.sortByPriceDescending());
+        Allure.step("When selecting price descending sorting (high to low)", () ->
+                homePage.sortByPriceDescending());
 
-        Allure.step("Então os preços devem estar em ordem decrescente", () ->
-            assertTrue(homePage.arePricesSortedDescending()));
+        Allure.step("Then prices should be in descending order", () ->
+                assertTrue(homePage.arePricesSortedDescending()));
     }
 
-    // Adiciona item ao carrinho e valida estado visual/contador.
     @Test
     @Tag("home")
     @Tag("cart")
     @Tag("tc19")
-    @DisplayName("TC19 - Deve adicionar mochila ao carrinho")
+    @DisplayName("TC19 - Should add backpack to cart")
     @Story("Cart")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Adiciona o item Backpack ao carrinho e valida estado visual e badge.")
+    @Description("Adds Backpack to cart and validates visual state and badge count.")
     void shouldAddBackpackToCart() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando adicionar o produto Backpack ao carrinho", () ->
-            homePage.addBackpackToCart());
+        Allure.step("When adding Backpack to cart", () ->
+                homePage.addBackpackToCart());
 
-        Allure.step("Então o botão de remover do Backpack deve aparecer", () ->
-            assertTrue(homePage.isBackpackAddedToCart()));
+        Allure.step("Then Backpack remove button should be visible", () ->
+                assertTrue(homePage.isBackpackAddedToCart()));
 
-        Allure.step("E o badge do carrinho deve exibir 1 item", () ->
-            assertTrue(homePage.hasCartBadgeCount(testData.expectedInt("cartBadgeOne"))));
+        Allure.step("And cart badge should display 1 item", () ->
+                assertTrue(homePage.hasCartBadgeCount(
+                        testData.testValueInt("HomePageTest", "TC19", "expectedCartBadge"))));
     }
 
-    // Remove item do carrinho e valida contador zerado.
     @Test
     @Tag("home")
     @Tag("cart")
     @Tag("tc20")
-    @DisplayName("TC20 - Deve remover mochila do carrinho")
+    @DisplayName("TC20 - Should remove backpack from cart")
     @Story("Cart")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Remove item do carrinho e valida badge zerado.")
+    @Description("Removes item from cart and validates zero badge.")
     void shouldRemoveBackpackFromCart() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("E que o produto Backpack já foi adicionado", () ->
-            homePage.addBackpackToCart());
+        Allure.step("And Backpack was already added", () ->
+                homePage.addBackpackToCart());
 
-        Allure.step("Quando remover o produto Backpack do carrinho", () ->
-            homePage.removeBackpackFromCart());
+        Allure.step("When removing Backpack from cart", () ->
+                homePage.removeBackpackFromCart());
 
-        Allure.step("Então o badge do carrinho deve exibir 0 item", () ->
-            assertTrue(homePage.hasCartBadgeCount(testData.expectedInt("cartBadgeZero"))));
+        Allure.step("Then cart badge should display 0 item", () ->
+                assertTrue(homePage.hasCartBadgeCount(
+                        testData.testValueInt("HomePageTest", "TC20", "expectedCartBadge"))));
     }
 
     @Test
     @Tag("home")
     @Tag("product-details")
     @Tag("tc21")
-    @DisplayName("TC21 - Deve abrir página de detalhes ao clicar em um produto")
+    @DisplayName("TC21 - Should open product details page when clicking a product")
     @Story("Product Details In Home")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida que clicar em um produto leva à página de detalhes com informações corretas.")
+    @Description("Validates that clicking a product opens its details page with correct information.")
     void shouldOpenProductDetailsPageFromHome() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando clicar no produto Backpack", () ->
-            homePage.clickProductByName(testData.expected("backpackProductName")));
+        Allure.step("When clicking Backpack product", () ->
+                homePage.clickProductByName(testData.product("backpack", "name")));
 
-        Allure.step("Então a página de detalhes deve carregar", () -> {
+        Allure.step("Then product details page should load", () -> {
             assertTrue(homePage.isProductDetailsLoaded());
-            assertEquals(testData.expected("backpackProductName"), homePage.getProductDetailsName());
-            assertTrue(homePage.getProductDetailsPrice().contains(testData.expected("backpackPriceContains")));
+            assertEquals(testData.product("backpack", "name"), homePage.getProductDetailsName());
+            assertTrue(homePage.getProductDetailsPrice().contains(testData.product("backpack", "price").replace("$", "")));
         });
     }
 
@@ -260,22 +251,22 @@ public class HomePageTest extends BaseTest {
     @Tag("home")
     @Tag("product-details")
     @Tag("tc22")
-    @DisplayName("TC22 - Deve exibir informações corretas do produto nos detalhes")
+    @DisplayName("TC22 - Should display correct product information on details page")
     @Story("Product Details In Home")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida que nome, descrição e preço são exibidos corretamente nos detalhes do produto.")
+    @Description("Validates product name, description, and price on details page.")
     void shouldDisplayProductDetailsCorrectlyFromHome() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando clicar no produto Backpack", () ->
-            homePage.clickProductByName(testData.expected("backpackProductName")));
+        Allure.step("When clicking Backpack product", () ->
+                homePage.clickProductByName(testData.product("backpack", "name")));
 
-        Allure.step("Então deve exibir informações completas do produto", () -> {
+        Allure.step("Then full product information should be displayed", () -> {
             assertTrue(homePage.isProductDetailsLoaded());
-            assertEquals(testData.expected("backpackProductName"), homePage.getProductDetailsName());
-            assertTrue(homePage.getProductDetailsDescription().contains(testData.expected("backpackDescriptionContains")));
-            assertEquals(testData.expected("backpackProductPrice"), homePage.getProductDetailsPrice());
+            assertEquals(testData.product("backpack", "name"), homePage.getProductDetailsName());
+            assertTrue(homePage.getProductDetailsDescription().contains(testData.product("backpack", "descriptionContains")));
+            assertEquals(testData.product("backpack", "price"), homePage.getProductDetailsPrice());
             assertTrue(homePage.isAddToCartButtonVisibleOnDetails());
         });
     }
@@ -284,24 +275,24 @@ public class HomePageTest extends BaseTest {
     @Tag("home")
     @Tag("product-details")
     @Tag("tc23")
-    @DisplayName("TC23 - Deve adicionar produto ao carrinho a partir de detalhes")
+    @DisplayName("TC23 - Should add product to cart from details page")
     @Story("Product Details In Home")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida que é possível adicionar um produto ao carrinho a partir da página de detalhes.")
+    @Description("Validates adding a product to cart from details page.")
     void shouldAddProductToCartFromDetailsInHome() {
-        Allure.step("Dado que o usuário está na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given the user is on the homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando abrir detalhes do Backpack e adicionar ao carrinho", () -> {
-            homePage.clickProductByName(testData.expected("backpackProductName"));
+        Allure.step("When opening Backpack details and adding to cart", () -> {
+            homePage.clickProductByName(testData.product("backpack", "name"));
             assertTrue(homePage.isProductDetailsLoaded());
             homePage.addToCartFromProductDetails();
             homePage.backToProductsFromDetails();
         });
 
-        Allure.step("Então o badge do carrinho deve exibir 1 item", () -> {
+        Allure.step("Then cart badge should display 1 item", () -> {
             assertTrue(homePage.isLoaded());
-            assertEquals(testData.expectedInt("cartBadgeOne"), homePage.getCartBadgeCount());
+            assertEquals(testData.testValueInt("HomePageTest", "TC23", "expectedCartBadge"), homePage.getCartBadgeCount());
         });
     }
 
@@ -309,22 +300,22 @@ public class HomePageTest extends BaseTest {
     @Tag("home")
     @Tag("product-details")
     @Tag("tc24")
-    @DisplayName("TC24 - Deve voltar para lista ao clicar em Back to products")
+    @DisplayName("TC24 - Should return to product list when clicking Back to products")
     @Story("Product Details In Home")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida que o botão Back to products retorna corretamente à home.")
+    @Description("Validates that Back to products returns correctly to homepage.")
     void shouldNavigateBackToProductsListFromDetailsInHome() {
-        Allure.step("Dado que o usuário está na página de detalhes", () -> {
+        Allure.step("Given the user is on product details page", () -> {
             assertTrue(homePage.isLoaded());
-            homePage.clickProductByName(testData.expected("backpackProductName"));
+            homePage.clickProductByName(testData.product("backpack", "name"));
             assertTrue(homePage.isProductDetailsLoaded());
             assertTrue(homePage.isBackButtonVisibleOnDetails());
         });
 
-        Allure.step("Quando clicar em Back to products", () ->
-            homePage.backToProductsFromDetails());
+        Allure.step("When clicking Back to products", () ->
+                homePage.backToProductsFromDetails());
 
-        Allure.step("Então deve retornar para a Home", () -> {
+        Allure.step("Then the user should return to homepage", () -> {
             assertTrue(homePage.isLoaded());
             assertEquals(testData.expectedInt("inventoryItemCount"), homePage.getInventoryItemCount());
         });
@@ -334,26 +325,26 @@ public class HomePageTest extends BaseTest {
     @Tag("home")
     @Tag("product-details")
     @Tag("tc25")
-    @DisplayName("TC25 - Deve manter estado do carrinho ao navegar para detalhes e voltar")
+    @DisplayName("TC25 - Should keep cart state while navigating to details and back")
     @Story("Product Details In Home")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Valida que a quantidade do carrinho é mantida ao abrir e fechar detalhes.")
+    @Description("Validates cart quantity remains unchanged after opening and closing details page.")
     void shouldMaintainCartStateWhenNavigatingDetailsInHome() {
-        Allure.step("Dado que o usuário está na Home com Backpack no carrinho", () -> {
+        Allure.step("Given the user has Backpack in cart on homepage", () -> {
             assertTrue(homePage.isLoaded());
             homePage.addBackpackToCart();
             assertTrue(homePage.isBackpackAddedToCart());
         });
 
-        Allure.step("Quando abrir detalhes do produto e voltar", () -> {
-            homePage.clickProductByName(testData.expected("backpackProductName"));
+        Allure.step("When opening product details and returning", () -> {
+            homePage.clickProductByName(testData.product("backpack", "name"));
             assertTrue(homePage.isProductDetailsLoaded());
             homePage.backToProductsFromDetails();
         });
 
-        Allure.step("Então o carrinho deve manter o item", () -> {
+        Allure.step("Then cart should keep the item", () -> {
             assertTrue(homePage.isLoaded());
-            assertEquals(testData.expectedInt("cartBadgeOne"), homePage.getCartBadgeCount());
+            assertEquals(testData.testValueInt("HomePageTest", "TC25", "expectedCartBadge"), homePage.getCartBadgeCount());
             assertTrue(homePage.isBackpackAddedToCart());
         });
     }
@@ -363,36 +354,36 @@ public class HomePageTest extends BaseTest {
     @Tag("multi-user")
     @Tag("known-bug")
     @Tag("tc26")
-    @DisplayName("TC26 - Deve confirmar anomalias da Home com problem_user")
+    @DisplayName("TC26 - Should confirm homepage anomalies with problem_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Confirma problemas conhecidos da Home com problem_user: imagens com placeholder de erro e Backpack iniciando com botão Remove.")
+    @Description("Confirms known homepage issues for problem_user.")
     void shouldConfirmProblemUserHomeAnomalies() {
-        Allure.label("knownIssue", "SAUCEDEMO-PROBLEM-USER-HOME");
+        Allure.label("knownIssue", testData.knownIssue("problemUserHome"));
 
-        Allure.step("Dado que o usuário padrão está autenticado na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given standard user is authenticated on homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando fizer logout e entrar com problem_user", () -> {
+        Allure.step("When logging out and signing in with problem_user", () -> {
             homePage.logout();
             loginPage.loginWithProblemUser();
         });
 
-        Allure.step("Então a Home deve carregar para o usuário problem_user", () -> {
+        Allure.step("Then homepage should load for problem_user", () -> {
             assertTrue(homePage.isLoaded());
             assertTrue(homePage.hasExpectedInventoryItemCount());
         });
 
         HomePage.HomeAnomalyResult anomalyResult = homePage.analyzeProblemUserHomeAnomalies();
 
-        Allure.step("E deve ter anomalias do problem_user", () ->
-            assertTrue(anomalyResult.hasProblemUserSpecificIssue()));
+        Allure.step("And problem_user anomalies should be detected", () ->
+                assertTrue(anomalyResult.hasProblemUserSpecificIssue()));
 
         Allure.addAttachment(
-            "Known Defect Evidence",
-            "text/plain",
-            anomalyResult.toEvidenceText("problem_user"),
-            ".txt"
+                "Known Defect Evidence",
+                "text/plain",
+                anomalyResult.toEvidenceText("problem_user"),
+                ".txt"
         );
     }
 
@@ -401,39 +392,39 @@ public class HomePageTest extends BaseTest {
     @Tag("multi-user")
     @Tag("known-bug")
     @Tag("tc27")
-    @DisplayName("TC27 - Deve confirmar anomalia da Home com performance_glitch_user")
+    @DisplayName("TC27 - Should confirm homepage anomaly with performance_glitch_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Confirma anomalia na Home com performance_glitch_user, principalmente estado incorreto do botão Backpack.")
+    @Description("Confirms homepage delay/anomaly behavior for performance_glitch_user.")
     void shouldConfirmPerformanceGlitchUserHomeAnomalies() {
-        Allure.label("knownIssue", "SAUCEDEMO-PERFORMANCE-GLITCH-HOME");
-        final long[] loginDurationMs = new long[] {0L};
+        Allure.label("knownIssue", testData.knownIssue("performanceGlitchHome"));
+        final long[] loginDurationMs = new long[]{0L};
 
-        Allure.step("Dado que o usuário padrão está autenticado na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given standard user is authenticated on homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando fizer logout e login com performance_glitch_user", () -> {
+        Allure.step("When logging out and signing in with performance_glitch_user", () -> {
             homePage.logout();
             assertTrue(loginPage.isLoaded());
             loginDurationMs[0] = loginPage.loginWithPerformanceGlitchUserAndMeasureDurationMs();
         });
 
-        Allure.step("Então a Home deve carregar para performance_glitch_user", () -> {
+        Allure.step("Then homepage should load for performance_glitch_user", () -> {
             assertTrue(homePage.isLoaded());
             assertTrue(homePage.hasExpectedInventoryItemCount());
         });
 
         HomePage.PerformanceGlitchHomeAnomalyResult anomalyResult =
-            homePage.analyzePerformanceGlitchUserIssues(loginDurationMs[0]);
+                homePage.analyzePerformanceGlitchUserIssues(loginDurationMs[0]);
 
-        Allure.step("E deve ter delay do performance_glitch_user", () ->
-            assertTrue(anomalyResult.hasPerformanceGlitchSpecificIssue()));
+        Allure.step("And performance glitch delay should be detected", () ->
+                assertTrue(anomalyResult.hasPerformanceGlitchSpecificIssue()));
 
         Allure.addAttachment(
-            "Known Defect Evidence",
-            "text/plain",
-            anomalyResult.toEvidenceText(),
-            ".txt"
+                "Known Defect Evidence",
+                "text/plain",
+                anomalyResult.toEvidenceText(),
+                ".txt"
         );
     }
 
@@ -442,38 +433,39 @@ public class HomePageTest extends BaseTest {
     @Tag("multi-user")
     @Tag("known-bug")
     @Tag("tc28")
-    @DisplayName("TC28 - Deve analisar anomalias da Home com error_user")
+    @DisplayName("TC28 - Should analyze homepage anomalies with error_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Analisa anomalias da Home com error_user, documentando qualquer problema encontrado.")
+    @Description("Analyzes homepage anomalies for error_user and records findings.")
     void shouldConfirmErrorUserHomeAnomalies() {
-        Allure.label("knownIssue", "SAUCEDEMO-ERROR-USER-HOME");
+        Allure.label("knownIssue", testData.knownIssue("errorUserHome"));
 
-        Allure.step("Dado que o usuário padrão está autenticado na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given standard user is authenticated on homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando fizer logout e login com error_user", () -> {
+        Allure.step("When logging out and signing in with error_user", () -> {
             homePage.logout();
             assertTrue(loginPage.isLoaded());
             loginPage.loginWithErrorUser();
         });
 
-        Allure.step("Então a Home deve carregar para error_user", () -> {
+        Allure.step("Then homepage should load for error_user", () -> {
             assertTrue(homePage.isLoaded());
             assertTrue(homePage.hasExpectedInventoryItemCount());
         });
 
         HomePage.HomeAnomalyResult anomalyResult = homePage.analyzeErrorUserHomeAnomalies();
 
-        Allure.step("E analisa qualquer anomalia presente", () -> {
-            // Document found anomalies but don't fail if none found - site behavior may vary
-            Allure.addAttachment(
-                "Analysis Result",
-                "text/plain",
-                anomalyResult.toEvidenceText("error_user"),
-                ".txt"
-            );
-        });
+        Allure.step("And backpack button state should remain consistent after analysis", () ->
+                assertTrue(homePage.isBackpackReadyToAdd() || homePage.isBackpackAddedToCart()));
+
+        Allure.step("And anomaly analysis should be attached", () ->
+                Allure.addAttachment(
+                        "Analysis Result",
+                        "text/plain",
+                        anomalyResult.toEvidenceText("error_user"),
+                        ".txt"
+                ));
     }
 
     @Test
@@ -481,37 +473,37 @@ public class HomePageTest extends BaseTest {
     @Tag("multi-user")
     @Tag("known-bug")
     @Tag("tc29")
-    @DisplayName("TC29 - Deve confirmar anomalia visual da Home com visual_user")
+    @DisplayName("TC29 - Should confirm visual homepage anomaly with visual_user")
     @Story("Home With Alternative Users")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Confirma anomalia visual da Home com visual_user, com foco em desalinhamento CSS.")
+    @Description("Confirms visual CSS anomaly behavior for visual_user.")
     void shouldConfirmVisualUserHomeAnomalies() {
-        Allure.label("knownIssue", "SAUCEDEMO-VISUAL-USER-HOME");
+        Allure.label("knownIssue", testData.knownIssue("visualUserHome"));
 
-        Allure.step("Dado que o usuário padrão está autenticado na Home", () ->
-            assertTrue(homePage.isLoaded()));
+        Allure.step("Given standard user is authenticated on homepage", () ->
+                assertTrue(homePage.isLoaded()));
 
-        Allure.step("Quando fizer logout e login com visual_user", () -> {
+        Allure.step("When logging out and signing in with visual_user", () -> {
             homePage.logout();
             assertTrue(loginPage.isLoaded());
             loginPage.loginWithVisualUser();
         });
 
-        Allure.step("Então a Home deve carregar para visual_user", () -> {
+        Allure.step("Then homepage should load for visual_user", () -> {
             assertTrue(homePage.isLoaded());
             assertTrue(homePage.hasExpectedInventoryItemCount());
         });
 
         HomePage.VisualUserHomeAnomalyResult visualAnomalyResult = homePage.analyzeVisualUserHomeAnomalies();
 
-        Allure.step("E deve detectar anomalia visual CSS (texto ou botão desalinhado)", () ->
-            assertTrue(visualAnomalyResult.hasVisualUserSpecificIssue()));
+        Allure.step("And visual CSS anomaly should be detected", () ->
+                assertTrue(visualAnomalyResult.hasVisualUserSpecificIssue()));
 
         Allure.addAttachment(
-            "Known Defect Evidence",
-            "text/plain",
-            visualAnomalyResult.toEvidenceText(),
-            ".txt"
+                "Known Defect Evidence",
+                "text/plain",
+                visualAnomalyResult.toEvidenceText(),
+                ".txt"
         );
     }
 }

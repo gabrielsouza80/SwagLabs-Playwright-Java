@@ -7,14 +7,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Page Object da Home/Inventory.
-// Reúne ações e validações funcionais da página principal após login.
+// Page Object for Home/Inventory.
+// Contains main actions and functional validations after login.
 public class HomePage {
     private final Page page;
     private final TestData testData;
-    private final long performanceGlitchDelayThresholdMs;
 
-    // Seletores dos elementos importantes da home.
+    // Selectors for key homepage elements.
     private static final String TITLE = "[data-test='title']";
     private static final String INVENTORY_LIST = "[data-test='inventory-list']";
     private static final String INVENTORY_ITEM = "[data-test='inventory-item']";
@@ -60,8 +59,8 @@ public class HomePage {
         }
 
         public boolean hasProblemUserSpecificIssue() {
-            // problem_user DEVE ter imagens quebradas (sl-404 placeholder)
-            // OU começar com Backpack em estado Remove (sem poder adicionar)
+            // problem_user may show broken images (sl-404 placeholder)
+            // or Backpack starting in Remove state (without being added)
             return brokenImageIssue || startedWithRemove;
         }
 
@@ -148,31 +147,30 @@ public class HomePage {
     public HomePage(Page page) {
         this.page = page;
         this.testData = TestData.get();
-        this.performanceGlitchDelayThresholdMs = testData.expectedInt("performanceGlitchDelayThresholdMs");
     }
 
-    // Validação principal de carregamento da home.
-    @Step("Validar carregamento da Home/Inventory")
+    // Validates the main Home/Inventory load state.
+    @Step("Validate Home/Inventory is loaded")
     public boolean isLoaded() {
-        return page.url().contains("/inventory.html")
+        return page.url().contains(testData.route("inventory"))
                 && page.locator(INVENTORY_LIST).isVisible()
                 && testData.expected("homeTitle").equals(page.locator(TITLE).innerText().trim());
     }
 
-    // Conta quantos produtos existem na listagem.
-    @Step("Contar itens da listagem")
+    // Counts how many products are listed.
+    @Step("Count listed inventory items")
     public int getInventoryItemCount() {
         return page.locator(INVENTORY_ITEM).count();
     }
 
-    // Retorna o título exibido na home (Products).
-    @Step("Obter título da Home")
+    // Returns the title shown on home (Products).
+    @Step("Get homepage title")
     public String getPageTitle() {
         return page.locator(TITLE).innerText().trim();
     }
 
-    // Retorna a opção de ordenação ativa no topo da página.
-    @Step("Obter opção de ordenação ativa")
+    // Returns the active sorting option shown at the top.
+    @Step("Get active sort option")
     public String getActiveSortOption() {
         return page.locator(ACTIVE_SORT_OPTION).innerText().trim();
     }
@@ -189,70 +187,70 @@ public class HomePage {
         return getInventoryItemCount() == testData.expectedInt("inventoryItemCount");
     }
 
-    // Altera ordenação via value do select: az, za, lohi, hilo.
-    @Step("Ordenar produtos por opção: {optionValue}")
+    // Changes sorting by select option value: az, za, lohi, hilo.
+    @Step("Sort products by option: {optionValue}")
     public void sortBy(String optionValue) {
         page.locator(SORT_DROPDOWN).selectOption(optionValue);
     }
 
-    @Step("Ordenar por nome crescente (A-Z)")
+    @Step("Sort by name ascending (A-Z)")
     public void sortByNameAscending() {
         sortBy(testData.sortOption("nameAsc"));
     }
 
-    @Step("Ordenar por nome decrescente (Z-A)")
+    @Step("Sort by name descending (Z-A)")
     public void sortByNameDescending() {
         sortBy(testData.sortOption("nameDesc"));
     }
 
-    @Step("Ordenar por preço crescente (low to high)")
+    @Step("Sort by price ascending (low to high)")
     public void sortByPriceAscending() {
         sortBy(testData.sortOption("priceAsc"));
     }
 
-    @Step("Ordenar por preço decrescente (high to low)")
+    @Step("Sort by price descending (high to low)")
     public void sortByPriceDescending() {
         sortBy(testData.sortOption("priceDesc"));
     }
 
-    // Clica em um produto específico pelo nome.
-    @Step("Clicar no produto: {productName}")
+    // Clicks a specific product by name.
+    @Step("Click product: {productName}")
     public void clickProductByName(String productName) {
         page.locator("[data-test='inventory-item-name']:has-text('" + productName + "')")
             .first()
             .click();
     }
 
-    // Clica em um produto específico pelo data-test do item.
-    @Step("Clicar no produto com ID: {itemDataTest}")
+    // Clicks a specific product by item data-test.
+    @Step("Click product by ID: {itemDataTest}")
     public void clickProductByDataTest(String itemDataTest) {
         page.locator("[data-test='" + itemDataTest + "-img-link']").click();
     }
 
-    @Step("Validar carregamento da página de detalhes do produto")
+    @Step("Validate product details page is loaded")
     public boolean isProductDetailsLoaded() {
-        return page.url().contains("/inventory-item.html")
+        return page.url().contains(testData.route("productDetails"))
                 && page.locator(PRODUCT_NAME).isVisible()
                 && page.locator(PRODUCT_DESC).isVisible()
                 && page.locator(PRODUCT_PRICE).isVisible();
     }
 
-    @Step("Obter nome do produto nos detalhes")
+    @Step("Get product name from details")
     public String getProductDetailsName() {
         return page.locator(PRODUCT_NAME).innerText().trim();
     }
 
-    @Step("Obter descrição do produto nos detalhes")
+    @Step("Get product description from details")
     public String getProductDetailsDescription() {
         return page.locator(PRODUCT_DESC).innerText().trim();
     }
 
-    @Step("Obter preço do produto nos detalhes")
+    @Step("Get product price from details")
     public String getProductDetailsPrice() {
         return page.locator(PRODUCT_PRICE).innerText().trim();
     }
 
-    @Step("Adicionar ao carrinho a partir de detalhes")
+    @Step("Add to cart from details")
     public void addToCartFromProductDetails() {
         if (page.locator(ADD_TO_CART_DETAILS_BUTTON).count() > 0) {
             page.locator(ADD_TO_CART_DETAILS_BUTTON).click();
@@ -266,7 +264,7 @@ public class HomePage {
                 || page.locator("button[data-test^='add-to-cart']").count() > 0;
     }
 
-    @Step("Voltar dos detalhes para a listagem")
+    @Step("Return from details to product list")
     public void backToProductsFromDetails() {
         page.locator(BACK_TO_PRODUCTS_BUTTON).click();
     }
@@ -275,14 +273,14 @@ public class HomePage {
         return page.locator(BACK_TO_PRODUCTS_BUTTON).isVisible();
     }
 
-    // Captura os nomes de todos os produtos visíveis.
+    // Captures names of all visible products.
     public List<String> getProductNames() {
         return page.locator(PRODUCT_NAME).allInnerTexts().stream()
                 .map(String::trim)
                 .collect(Collectors.toList());
     }
 
-    // Captura preços de todos os produtos e converte para número.
+    // Captures prices of all products and converts to number.
     public List<Double> getProductPrices() {
         return page.locator(PRODUCT_PRICE).allInnerTexts().stream()
                 .map(text -> text.replace("$", "").trim())
@@ -290,49 +288,49 @@ public class HomePage {
                 .collect(Collectors.toList());
     }
 
-    // Verifica se nomes estão em ordem crescente (A-Z).
+    // Checks if names are in ascending order (A-Z).
     public boolean areProductNamesSortedAscending() {
         List<String> names = getProductNames();
         List<String> sorted = names.stream().sorted().collect(Collectors.toList());
         return names.equals(sorted);
     }
 
-    // Verifica se nomes estão em ordem decrescente (Z-A).
+    // Checks if names are in descending order (Z-A).
     public boolean areProductNamesSortedDescending() {
         List<String> names = getProductNames();
         List<String> sorted = names.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
         return names.equals(sorted);
     }
 
-    // Verifica se preços estão do menor para o maior.
+    // Checks if prices are sorted from low to high.
     public boolean arePricesSortedAscending() {
         List<Double> prices = getProductPrices();
         List<Double> sorted = prices.stream().sorted().collect(Collectors.toList());
         return prices.equals(sorted);
     }
 
-    // Verifica se preços estão do maior para o menor.
+    // Checks if prices are sorted from high to low.
     public boolean arePricesSortedDescending() {
         List<Double> prices = getProductPrices();
         List<Double> sorted = prices.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
         return prices.equals(sorted);
     }
 
-    // Adiciona o item Backpack ao carrinho.
-    @Step("Adicionar produto Backpack ao carrinho")
+    // Adds Backpack to the cart.
+    @Step("Add Backpack to cart")
     public void addBackpackToCart() {
         page.locator(ADD_BACKPACK_BUTTON).click();
     }
 
-    // Remove o item Backpack do carrinho.
-    @Step("Remover produto Backpack do carrinho")
+    // Removes Backpack from the cart.
+    @Step("Remove Backpack from cart")
     public void removeBackpackFromCart() {
         page.locator(REMOVE_BACKPACK_BUTTON).click();
     }
 
-    // Tenta remover Backpack sem adicionar antes.
-    // Retorna true quando o botão Remove estava disponível e foi clicado.
-    @Step("Tentar remover Backpack sem adicionar")
+    // Tries to remove Backpack without adding it first.
+    // Returns true when Remove button was available and clicked.
+    @Step("Try removing Backpack without adding")
     public boolean tryRemoveBackpackWithoutAdding() {
         if (!page.locator(REMOVE_BACKPACK_BUTTON).isVisible()) {
             return false;
@@ -342,7 +340,7 @@ public class HomePage {
         return true;
     }
 
-    // Se o botão Remove está visível, significa que o item foi adicionado.
+    // If Remove button is visible, item is considered added.
     public boolean isBackpackAddedToCart() {
         return page.locator(REMOVE_BACKPACK_BUTTON).isVisible();
     }
@@ -352,38 +350,41 @@ public class HomePage {
                 && page.locator(REMOVE_BACKPACK_BUTTON).count() == 0;
     }
 
-    // Anomalia observada no problem_user: Backpack já aparece como Remove sem adicionar.
+    // Known anomaly for problem_user: Backpack may start as Remove without add.
     public boolean isBackpackInIncorrectDefaultState() {
         return page.locator(REMOVE_BACKPACK_BUTTON).isVisible()
                 && page.locator(ADD_BACKPACK_BUTTON).count() == 0;
     }
 
-    // Anomalia observada no problem_user: imagens da lista usam placeholder sl-404.
+    // Known anomaly for problem_user: inventory images may use sl-404 placeholder.
     public boolean areAllInventoryImagesUsingErrorPlaceholder() {
+        String errorPlaceholder = testData.knownIndicator("imageErrorPlaceholder");
         List<String> imageSources = page.locator("img[data-test$='-img']").all().stream()
                 .map(locator -> locator.getAttribute("src"))
                 .filter(source -> source != null && !source.isBlank())
                 .collect(Collectors.toList());
 
-        return !imageSources.isEmpty() && imageSources.stream().allMatch(source -> source.contains("sl-404"));
+        return !imageSources.isEmpty() && imageSources.stream().allMatch(source -> source.contains(errorPlaceholder));
     }
 
-    // Versão menos rígida: confirma pelo menos uma imagem quebrada no inventário.
+    // Less strict check: confirms at least one broken inventory image.
     public boolean hasAnyInventoryImageUsingErrorPlaceholder() {
+        String errorPlaceholder = testData.knownIndicator("imageErrorPlaceholder");
         return page.locator("img[data-test$='-img']").all().stream()
                 .map(locator -> locator.getAttribute("src"))
                 .filter(source -> source != null && !source.isBlank())
-                .anyMatch(source -> source.contains("sl-404"));
+            .anyMatch(source -> source.contains(errorPlaceholder));
     }
 
-    // Anomalia visual do visual_user: alguns nomes de produtos estão com texto desalinhado.
+    // Visual anomaly for visual_user: some product names may be misaligned.
     public boolean hasAnyProductNameWithMisalignment() {
-        return page.locator("[data-test='inventory-item-name'].align_right").count() > 0;
+        return page.locator("[data-test='inventory-item-name']." + testData.knownIndicator("visualNameMisalignmentClass"))
+                .count() > 0;
     }
 
-    // Anomalia visual do visual_user: alguns botões estão desalinhados visualmente.
+    // Visual anomaly for visual_user: some buttons may be misaligned.
     public boolean hasAnyButtonWithMisalignment() {
-        return page.locator("button.btn_inventory_misaligned").count() > 0;
+        return page.locator("button." + testData.knownIndicator("visualButtonMisalignmentClass")).count() > 0;
     }
 
     private HomeAnomalyResult analyzeCurrentHomeAnomalies() {
@@ -407,22 +408,22 @@ public class HomePage {
                 addDidNotSwitchToRemove);
     }
 
-    @Step("Analisar anomalias da Home para problem_user")
+    @Step("Analyze homepage anomalies for problem_user")
     public HomeAnomalyResult analyzeProblemUserHomeAnomalies() {
         return analyzeCurrentHomeAnomalies();
     }
 
-    @Step("Analisar anomalias da Home para performance_glitch_user")
+    @Step("Analyze homepage anomalies for performance_glitch_user")
     public HomeAnomalyResult analyzePerformanceGlitchUserHomeAnomalies() {
         return analyzeCurrentHomeAnomalies();
     }
 
-    @Step("Analisar anomalias da Home para error_user")
+    @Step("Analyze homepage anomalies for error_user")
     public HomeAnomalyResult analyzeErrorUserHomeAnomalies() {
         return analyzeCurrentHomeAnomalies();
     }
 
-    @Step("Analisar anomalias visuais da Home para visual_user")
+    @Step("Analyze visual homepage anomalies for visual_user")
     public VisualUserHomeAnomalyResult analyzeVisualUserHomeAnomalies() {
         boolean textMisalignment = hasAnyProductNameWithMisalignment();
         boolean buttonMisalignment = hasAnyButtonWithMisalignment();
@@ -430,17 +431,17 @@ public class HomePage {
         return new VisualUserHomeAnomalyResult(textMisalignment, buttonMisalignment);
     }
 
-    @Step("Analisar anomalias da Home e lentidão para performance_glitch_user")
+    @Step("Analyze homepage anomalies and delay for performance_glitch_user")
     public PerformanceGlitchHomeAnomalyResult analyzePerformanceGlitchUserIssues(long loginDurationMs) {
         HomeAnomalyResult homeAnomalyResult = analyzePerformanceGlitchUserHomeAnomalies();
         return new PerformanceGlitchHomeAnomalyResult(
                 homeAnomalyResult,
                 loginDurationMs,
-            performanceGlitchDelayThresholdMs);
+                testData.thresholdMs("performanceGlitchDelayMs"));
     }
 
-    // Retorna quantidade de itens no badge do carrinho.
-    // Se não existir badge, considera 0.
+    // Returns number of items in cart badge.
+    // If badge does not exist, returns 0.
     public int getCartBadgeCount() {
         if (page.locator(CART_BADGE).count() == 0) {
             return 0;
@@ -452,39 +453,39 @@ public class HomePage {
         return getCartBadgeCount() == expectedCount;
     }
 
-    // Abre a tela do carrinho.
-    @Step("Abrir página do carrinho")
+    // Opens cart page.
+    @Step("Open cart page")
     public void openCart() {
         page.locator(CART_LINK).click();
     }
 
-    // Valida se está na página de carrinho.
+    // Validates whether cart page is loaded.
     public boolean isCartPageLoaded() {
-        return page.url().contains("/cart.html")
+        return page.url().contains(testData.route("cart"))
                 && testData.expected("cartTitle").equals(page.locator(TITLE).innerText().trim());
     }
 
-    // Abre menu lateral hamburguer.
-    @Step("Abrir menu lateral")
+    // Opens side hamburger menu.
+    @Step("Open side menu")
     public void openMenu() {
         page.locator(OPEN_MENU).click();
     }
 
-    // Faz logout pelo menu lateral.
-    @Step("Fazer logout pela Home")
+    // Performs logout from side menu.
+    @Step("Logout from home")
     public void logout() {
         openMenu();
         page.locator(LOGOUT_SIDEBAR_LINK).click();
     }
 
-    // Reseta estado da aplicação (limpa carrinho/estado interno da sessão).
-    @Step("Resetar estado da aplicação")
+    // Resets application state (clears cart/internal session state).
+    @Step("Reset application state")
     public void resetAppState() {
         openMenu();
         page.locator(RESET_SIDEBAR_LINK).click();
     }
 
-    // Verifica presença de elementos principais da home.
+    // Checks presence of main homepage elements.
     public boolean hasMainHomeElements() {
         return page.locator(SORT_DROPDOWN).isVisible()
                 && page.locator(CART_LINK).isVisible()

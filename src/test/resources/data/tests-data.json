@@ -1,28 +1,47 @@
-{
+﻿{
   "meta": {
     "project": "playwright-java-saucedemo",
     "version": "1.0",
-    "description": "Dados de teste organizados por caso (TCxx)"
+    "description": "Test data organized by test case (TCxx)"
   },
   "global": {
     "baseUrl": "https://www.saucedemo.com/",
     "password": "secret_sauce",
+    "routes": {
+      "inventory": "/inventory.html",
+      "cart": "/cart.html",
+      "productDetails": "/inventory-item.html"
+    },
     "expected": {
       "homeTitle": "Products",
       "cartTitle": "Your Cart",
       "defaultSortLabel": "Name (A to Z)",
-      "inventoryItemCount": 6,
-      "backpackProductName": "Sauce Labs Backpack",
-      "backpackProductPrice": "$29.99",
-      "backpackPriceContains": "29.99",
-      "backpackDescriptionContains": "carry.allTheThings()",
-      "cartBadgeOne": 1,
-      "cartBadgeZero": 0,
-      "aboutUrlContains": "saucelabs.com",
-      "performanceGlitchDelayThresholdMs": 1500,
-      "knownIssueResetCode": "SAUCEDEMO-RESET-BACKPACK-BUTTON",
-      "knownIssueResetMessage": "Known issue: após Reset App State, o badge zera mas o botão do Backpack pode permanecer como Remove em vez de voltar para Add to cart.",
-      "knownIssueResetObservedMessage": "Reset App State zerou o badge, mas o botão Backpack não voltou para Add to cart."
+      "inventoryItemCount": 6
+    },
+    "thresholds": {
+      "performanceGlitchDelayMs": 1500
+    },
+    "products": {
+      "backpack": {
+        "name": "Sauce Labs Backpack",
+        "price": "$29.99",
+        "descriptionContains": "carry.allTheThings()"
+      }
+    },
+    "knownIndicators": {
+      "imageErrorPlaceholder": "sl-404",
+      "visualNameMisalignmentClass": "align_right",
+      "visualButtonMisalignmentClass": "btn_inventory_misaligned"
+    },
+    "knownIssues": {
+      "problemUserHome": "SAUCEDEMO-PROBLEM-USER-HOME",
+      "performanceGlitchHome": "SAUCEDEMO-PERFORMANCE-GLITCH-HOME",
+      "errorUserHome": "SAUCEDEMO-ERROR-USER-HOME",
+      "visualUserHome": "SAUCEDEMO-VISUAL-USER-HOME",
+      "resetBackpackButton": "SAUCEDEMO-RESET-BACKPACK-BUTTON"
+    },
+    "messages": {
+      "resetKnownDefect": "Known issue: after Reset App State, the badge resets, but the Backpack button may remain as Remove instead of returning to Add to cart."
     },
     "users": {
       "standard": "standard_user",
@@ -47,11 +66,11 @@
   "tests": {
     "LoginPageTest": {
       "TC01": {
-        "scenario": "login padrão com sucesso",
+        "scenario": "successful login with default user",
         "usernameRef": "standard"
       },
       "TC02": {
-        "scenario": "validar layout da tela de login",
+        "scenario": "validate login screen layout",
         "checks": [
           "logoVisible",
           "loginButtonVisible",
@@ -59,7 +78,7 @@
         ]
       },
       "TC03": {
-        "scenario": "validar usuários aceitos e senha padrão",
+        "scenario": "validate accepted users and default password",
         "expectedUsersRefs": [
           "standard",
           "lockedOut",
@@ -71,7 +90,7 @@
         "expectedPassword": "secret_sauce"
       },
       "TC04": {
-        "scenario": "erro sem usuário",
+        "scenario": "error without username",
         "input": {
           "username": "",
           "passwordRef": "global.password"
@@ -79,7 +98,7 @@
         "expectedErrorRef": "usernameRequired"
       },
       "TC05": {
-        "scenario": "erro sem senha",
+        "scenario": "error without password",
         "input": {
           "usernameRef": "standard",
           "password": ""
@@ -87,95 +106,93 @@
         "expectedErrorRef": "passwordRequired"
       },
       "TC06": {
-        "scenario": "erro usuário bloqueado",
+        "scenario": "error for locked out user",
         "usernameRef": "lockedOut",
         "expectedErrorRef": "lockedOut"
       },
       "TC07": {
-        "scenario": "login com performance_glitch_user",
+        "scenario": "login with performance_glitch_user",
         "usernameRef": "performanceGlitch"
       },
       "TC08": {
-        "scenario": "login com problem_user",
+        "scenario": "login with problem_user",
         "usernameRef": "problem"
       },
       "TC09": {
-        "scenario": "login com error_user",
+        "scenario": "login with error_user",
         "usernameRef": "error"
       },
       "TC10": {
-        "scenario": "login com visual_user",
+        "scenario": "login with visual_user",
         "usernameRef": "visual"
       }
     },
     "HomePageTest": {
       "TC11": {
-        "scenario": "elementos principais visíveis"
+        "scenario": "main elements are visible"
       },
       "TC12": {
-        "scenario": "título da home",
+        "scenario": "homepage title",
         "expectedTitleRef": "homeTitle"
       },
       "TC13": {
-        "scenario": "ordenação padrão",
+        "scenario": "default sorting",
         "expectedSortRef": "defaultSortLabel"
       },
       "TC14": {
-        "scenario": "quantidade de itens",
+        "scenario": "inventory item count",
         "expectedCountRef": "inventoryItemCount"
       },
       "TC15": {
-        "scenario": "ordenação nome crescente",
+        "scenario": "sort by name ascending",
         "sortOptionRef": "nameAsc"
       },
       "TC16": {
-        "scenario": "ordenação nome decrescente",
+        "scenario": "sort by name descending",
         "sortOptionRef": "nameDesc"
       },
       "TC17": {
-        "scenario": "ordenação preço crescente",
+        "scenario": "sort by price ascending",
         "sortOptionRef": "priceAsc"
       },
       "TC18": {
-        "scenario": "ordenação preço decrescente",
+        "scenario": "sort by price descending",
         "sortOptionRef": "priceDesc"
       },
       "TC19": {
-        "scenario": "adicionar backpack no carrinho",
+        "scenario": "add backpack to cart",
         "expectedCartBadge": 1
       },
       "TC20": {
-        "scenario": "remover backpack do carrinho",
+        "scenario": "remove backpack from cart",
         "expectedCartBadge": 0
       },
       "TC21": {
-        "scenario": "abrir página de detalhes ao clicar em um produto",
-        "productNameRef": "backpackProductName",
-        "expectedPriceContainsRef": "backpackPriceContains"
+        "scenario": "open details page when clicking the product",
+        "productRef": "backpack",
+        "expectedPriceRef": "backpack"
       },
       "TC22": {
-        "scenario": "exibir informações corretas do produto nos detalhes",
-        "productNameRef": "backpackProductName",
-        "expectedPriceRef": "backpackProductPrice",
-        "expectedDescriptionContainsRef": "backpackDescriptionContains"
+        "scenario": "display correct product information",
+        "productRef": "backpack"
       },
       "TC23": {
-        "scenario": "adicionar produto ao carrinho a partir de detalhes",
-        "productNameRef": "backpackProductName",
-        "expectedCartBadgeAfterAddRef": "cartBadgeOne"
+        "scenario": "add product to cart from details page",
+        "productRef": "backpack",
+        "expectedCartBadge": 1
       },
       "TC24": {
-        "scenario": "voltar para lista ao clicar em Back to products",
-        "productNameRef": "backpackProductName",
-        "expectedInventoryCountAfterBackRef": "inventoryItemCount"
+        "scenario": "return to list when click in Back to products",
+        "productRef": "backpack",
+        "expectedInventoryCountRef": "inventoryItemCount"
       },
       "TC25": {
-        "scenario": "manter estado do carrinho ao navegar para detalhes e voltar",
-        "productNameRef": "backpackProductName",
-        "expectedCartBadgeAfterNavigationRef": "cartBadgeOne"
+        "scenario": "keep cart state when navigating to details and returning",
+        "productRef": "backpack",
+        "expectedCartBadge": 1
       },
       "TC26": {
-        "scenario": "acesso home com problem_user - anomalias",
+        "scenario": "access home with problem_user - anomalies",
         "usernameRef": "problem",
         "expectedAnomalies": [
           "brokenImageIssue",
@@ -183,22 +200,22 @@
         ]
       },
       "TC27": {
-        "scenario": "acesso home com performance_glitch_user - delay e anomalias",
+        "scenario": "access home with performance_glitch_user - delay and anomalies",
         "usernameRef": "performanceGlitch",
-        "minExpectedDelayMsRef": "performanceGlitchDelayThresholdMs",
+        "minExpectedDelayMsRef": "performanceGlitchDelayMs",
         "expectedAnomalies": [
           "slowedDownLoad"
         ]
       },
       "TC28": {
-        "scenario": "acesso home com error_user - anomalias",
+        "scenario": "access home with error_user - anomalies",
         "usernameRef": "error",
         "expectedAnomalies": [
           "buttonStateInconsistency"
         ]
       },
       "TC29": {
-        "scenario": "acesso home com visual_user - anomalias visuais",
+        "scenario": "access home with visual_user - visual anomalies",
         "usernameRef": "visual",
         "expectedAnomalies": [
           "textMisalignment",
@@ -208,31 +225,17 @@
     },
     "ComponentsTest": {
       "TC30": {
-        "scenario": "exibir componentes globais do header"
+        "scenario": "open cart page"
       },
       "TC31": {
-        "scenario": "abrir menu lateral e exibir opções esperadas",
-        "aboutUrlContainsRef": "aboutUrlContains"
+        "scenario": "reset app state",
+        "badgeBeforeReset": 1,
+        "badgeAfterReset": 0,
+        "knownIssueRef": "resetBackpackButton",
+        "knownIssueMessageRef": "resetKnownDefect"
       },
       "TC32": {
-        "scenario": "fechar menu lateral no botão Close Menu"
-      },
-      "TC33": {
-        "scenario": "abrir página de carrinho"
-      },
-      "TC34": {
-        "scenario": "resetar estado e voltar botão Backpack para Add to cart",
-        "knownIssueCodeRef": "knownIssueResetCode",
-        "knownIssueMessageRef": "knownIssueResetMessage",
-        "knownIssueObservedMessageRef": "knownIssueResetObservedMessage",
-        "expectedBadgeBeforeResetRef": "cartBadgeOne",
-        "expectedBadgeAfterResetRef": "cartBadgeZero"
-      },
-      "TC35": {
-        "scenario": "fazer logout pelo menu global"
-      },
-      "TC36": {
-        "scenario": "voltar para inventário usando All Items"
+        "scenario": "logout from global menu"
       }
     }
   }
