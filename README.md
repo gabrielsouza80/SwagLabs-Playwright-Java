@@ -1,4 +1,4 @@
-# Playwright Java SauceDemo
+# SwagLabs Java Playwright
 
 End-to-end web test automation framework for SauceDemo, built with Java 21, Playwright, JUnit 5, and Allure.
 
