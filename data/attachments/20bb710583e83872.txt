@@ -1,1 +1,0 @@
-visual_user CSS anomalies -> textMisalignment=true, buttonMisalignment=true

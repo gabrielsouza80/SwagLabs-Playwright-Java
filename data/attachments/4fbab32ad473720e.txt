@@ -1,0 +1,1 @@
+performance_glitch_user anomalies -> brokenImage=false, startedWithRemove=false, removeDidNotSwitchToAdd=false, addDidNotSwitchToRemove=false, loginDurationMs=5113, delayThresholdMs=1500, delayIssue=true
